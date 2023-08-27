@@ -1,4 +1,4 @@
-# digger-csw
+# Digger
 It is Digger Remastered in C# on .NET in your browser.
 
 ## Demo
