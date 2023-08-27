@@ -29,7 +29,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     
     - name: Create demo
-      run: dotnet publish try/X.Demo -c:Release -o:publish -p:GHPages=true
+      run: dotnet publish try/Digger.Demo -c:Release -o:publish -p:GHPages=true
 
     - name: Deploy demo
       uses: peaceiris/actions-gh-pages@v3
