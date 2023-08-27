@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>DiggerClassic</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\icons\digger.png" />
+    <None Remove="Resources\icons\*.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\icons\digger.png" />
+    <EmbeddedResource Include="Resources\icons\*.png" />
   </ItemGroup>
 
 </Project>
