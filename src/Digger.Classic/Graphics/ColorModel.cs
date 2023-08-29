@@ -1,4 +1,6 @@
-﻿namespace DiggerClassic.Graphics
+﻿using DiggerAPI;
+
+namespace DiggerClassic.Graphics
 {
 	public sealed class ColorModel : IColorModel
 	{

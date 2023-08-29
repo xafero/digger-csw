@@ -1,4 +1,4 @@
-﻿namespace DiggerClassic.Graphics
+﻿namespace DiggerAPI
 {
 	public interface IColorModel
 	{

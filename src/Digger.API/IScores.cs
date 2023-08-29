@@ -1,4 +1,4 @@
-﻿namespace DiggerClassic.Scores
+﻿namespace DiggerAPI
 {
 	public interface IScores
 	{

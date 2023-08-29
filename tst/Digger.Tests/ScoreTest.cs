@@ -1,5 +1,6 @@
 using System.IO;
-using DiggerClassic.Scores;
+using DiggerAPI;
+using DiggerClassic.Score;
 using FluentAssertions;
 using Xunit;
 
@@ -35,7 +36,7 @@ namespace Digger.Tests
 
 		private static void ShouldWrite(TextWriter writer, ScoreTuple[] tuples)
 		{
-			var scores = new Scores { ScoreTuples = tuples };
+			var scores = new Scores(null) { ScoreTuples = tuples };
 			writer.WriteToStorage(scores);
 		}
 	}
