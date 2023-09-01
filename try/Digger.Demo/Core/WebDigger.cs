@@ -40,8 +40,7 @@ namespace DiggerDemo.Core
 			var data = pc.GetPixels();
 			var model = pc.GetCurrentSource().Model;
 
-			var shiftX = (float)(rw - (w * minF)) / 2;
-			var shiftY = (float)(rh - (h * minF)) / 2;
+			int shiftX = 0, shiftY = 0;
 			var paint = new SKPaint { Style = SKPaintStyle.Fill };
 
 			for (var x = 0; x < w; x++)
