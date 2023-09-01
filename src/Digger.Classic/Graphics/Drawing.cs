@@ -1,14 +1,13 @@
-﻿using DiggerClassic.Core;
-
-namespace DiggerClassic.Graphics
+namespace DiggerClassic
 {
-	internal class Drawing
+	internal sealed class Drawing
 	{
-		/// <summary>
-		/// 150
-		/// </summary>
+
+		Digger dig;
+
 		int[] field1 =
 		{
+			// [150]
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -21,11 +20,9 @@ namespace DiggerClassic.Graphics
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		};
 
-		/// <summary>
-		/// 150
-		/// </summary>
 		int[] field2 =
 		{
+			// [150]
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -38,11 +35,9 @@ namespace DiggerClassic.Graphics
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		};
 
-		/// <summary>
-		/// 150
-		/// </summary>
 		internal int[] field =
 		{
+			// [150]
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,30 +67,15 @@ namespace DiggerClassic.Graphics
 		short[] bonusbuf = new short[480];
 		short[] firebuf = new short[128];
 
-		/// <summary>
-		/// 12
-		/// </summary>
-		int[] bitmasks =
-		{
-			0xfffe, 0xfffd, 0xfffb, 0xfff7, 0xffef, 0xffdf, 0xffbf, 0xff7f, 0xfeff, 0xfdff, 0xfbff, 0xf7ff
-		};
+		int[] bitmasks = { 0xfffe, 0xfffd, 0xfffb, 0xfff7, 0xffef, 0xffdf, 0xffbf, 0xff7f, 0xfeff, 0xfdff, 0xfbff, 0xf7ff }; // [12]
 
-		/// <summary>
-		/// 6
-		/// </summary>
-		int[] monspr = { 0, 0, 0, 0, 0, 0 };
+		int[] monspr = { 0, 0, 0, 0, 0, 0 }; // [6]
+		int[] monspd = { 0, 0, 0, 0, 0, 0 }; // [6]
 
-		/// <summary>
-		/// 6
-		/// </summary>
-		int[] monspd = { 0, 0, 0, 0, 0, 0 };
-
-		int digspr;
-		int digspd;
-		int firespr;
+		int digspr = 0;
+		int digspd = 0;
+		int firespr = 0;
 		int fireheight = 8;
-
-		Digger dig;
 
 		internal Drawing(Digger d)
 		{

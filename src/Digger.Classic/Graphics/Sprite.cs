@@ -1,37 +1,33 @@
-﻿using System;
-using DiggerClassic.Core;
-
-namespace DiggerClassic.Graphics
+namespace DiggerClassic
 {
-	internal class Sprite
+	internal sealed class Sprite
 	{
+
+		Digger dig;
+
 		bool retrflag = true;
 
 		bool[] sprrdrwf =
 		{
-			false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false, 
 			false, false, false, false, false, false, false, false
 		}; // [17]
 
 		bool[] sprrecf =
 		{
-			false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false, 
 			false, false, false, false, false, false, false, false
 		}; // [17]
 
 		bool[] sprenf =
 		{
-			false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, 
 			false, false, false, false, false, false, false, false
 		}; // [16]
 
 		int[] sprch = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // [17]
 
-		short[][] sprmov =
-		{
-			null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null
-		}; // [16]
+		short[][] sprmov = { null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null }; // [16]
 
 		int[] sprx = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // [17]
 		int[] spry = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // [17]
@@ -47,8 +43,6 @@ namespace DiggerClassic.Graphics
 
 		static int[] defsprorder = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }; // [16]
 		int[] sprorder = defsprorder;
-
-		Digger dig;
 
 		internal Sprite(Digger d)
 		{

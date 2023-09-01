@@ -1,20 +1,17 @@
-﻿namespace DiggerClassic.Core
+namespace DiggerClassic
 {
-	internal class Bags
+	class Bags
 	{
-		Bag[] bagdat1 = { new(), new(), new(), new(), new(), new(), new(), new() };
-		Bag[] bagdat2 = { new(), new(), new(), new(), new(), new(), new(), new() };
-		Bag[] bagdat = { new(), new(), new(), new(), new(), new(), new(), new() };
-
-		int pushcount;
-		int goldtime;
-
-		/// <summary>
-		/// 4
-		/// </summary>
-		int[] wblanim = { 2, 0, 1, 0 };
 
 		Digger dig;
+
+		Bag[] bagdat1 = { new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag() };
+		Bag[] bagdat2 = { new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag() };
+		Bag[] bagdat = { new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag(), new Bag() };
+
+		int pushcount = 0, goldtime = 0;
+
+		int[] wblanim = { 2, 0, 1, 0 }; // [4]
 
 		internal Bags(Digger d)
 		{
@@ -25,7 +22,7 @@
 		{
 			int bag, b, bags = 0;
 			for (bag = 1, b = 2; bag < 8; bag++, b <<= 1)
-				if (bagdat[bag].Exist)
+				if (bagdat[bag].exist)
 					bags |= b;
 			return bags;
 		}
@@ -33,14 +30,14 @@
 		void baghitground(int bag)
 		{
 			int bn, b, clbits;
-			if (bagdat[bag].Dir == 6 && bagdat[bag].Fallh > 1)
-				bagdat[bag].Gt = 1;
+			if (bagdat[bag].dir == 6 && bagdat[bag].fallh > 1)
+				bagdat[bag].gt = 1;
 			else
-				bagdat[bag].Fallh = 0;
-			bagdat[bag].Dir = -1;
-			bagdat[bag].Wt = 15;
-			bagdat[bag].Wobbling = false;
-			clbits = dig.Drawing.drawgold(bag, 0, bagdat[bag].X, bagdat[bag].Y);
+				bagdat[bag].fallh = 0;
+			bagdat[bag].dir = -1;
+			bagdat[bag].wt = 15;
+			bagdat[bag].wobbling = false;
+			clbits = dig.Drawing.drawgold(bag, 0, bagdat[bag].x, bagdat[bag].y);
 			dig.Main.incpenalty();
 			for (bn = 1, b = 2; bn < 8; bn++, b <<= 1)
 				if ((b & clbits) != 0)
@@ -49,7 +46,7 @@
 
 		internal int bagy(int bag)
 		{
-			return bagdat[bag].Y;
+			return bagdat[bag].y;
 		}
 
 		internal void cleanupbags()
@@ -58,17 +55,17 @@
 			dig.Sound.soundfalloff();
 			for (bpa = 1; bpa < 8; bpa++)
 			{
-				if (bagdat[bpa].Exist && ((bagdat[bpa].H == 7 && bagdat[bpa].V == 9) ||
-				                          bagdat[bpa].Xr != 0 || bagdat[bpa].Yr != 0 || bagdat[bpa].Gt != 0 ||
-				                          bagdat[bpa].Fallh != 0 || bagdat[bpa].Wobbling))
+				if (bagdat[bpa].exist && ((bagdat[bpa].h == 7 && bagdat[bpa].v == 9) ||
+				                          bagdat[bpa].xr != 0 || bagdat[bpa].yr != 0 || bagdat[bpa].gt != 0 ||
+				                          bagdat[bpa].fallh != 0 || bagdat[bpa].wobbling))
 				{
-					bagdat[bpa].Exist = false;
+					bagdat[bpa].exist = false;
 					dig.Sprite.erasespr(bpa);
 				}
 				if (dig.Main.getcplayer() == 0)
-					bagdat1[bpa].CopyFrom(bagdat[bpa]);
+					bagdat1[bpa].copyFrom(bagdat[bpa]);
 				else
-					bagdat2[bpa].CopyFrom(bagdat[bpa]);
+					bagdat2[bpa].copyFrom(bagdat[bpa]);
 			}
 		}
 
@@ -77,41 +74,41 @@
 			int bag;
 			bool soundfalloffflag = true, soundwobbleoffflag = true;
 			for (bag = 1; bag < 8; bag++)
-				if (bagdat[bag].Exist)
+				if (bagdat[bag].exist)
 				{
-					if (bagdat[bag].Gt != 0)
+					if (bagdat[bag].gt != 0)
 					{
-						if (bagdat[bag].Gt == 1)
+						if (bagdat[bag].gt == 1)
 						{
 							dig.Sound.soundbreak();
-							dig.Drawing.drawgold(bag, 4, bagdat[bag].X, bagdat[bag].Y);
+							dig.Drawing.drawgold(bag, 4, bagdat[bag].x, bagdat[bag].y);
 							dig.Main.incpenalty();
 						}
-						if (bagdat[bag].Gt == 3)
+						if (bagdat[bag].gt == 3)
 						{
-							dig.Drawing.drawgold(bag, 5, bagdat[bag].X, bagdat[bag].Y);
+							dig.Drawing.drawgold(bag, 5, bagdat[bag].x, bagdat[bag].y);
 							dig.Main.incpenalty();
 						}
-						if (bagdat[bag].Gt == 5)
+						if (bagdat[bag].gt == 5)
 						{
-							dig.Drawing.drawgold(bag, 6, bagdat[bag].X, bagdat[bag].Y);
+							dig.Drawing.drawgold(bag, 6, bagdat[bag].x, bagdat[bag].y);
 							dig.Main.incpenalty();
 						}
-						bagdat[bag].Gt++;
-						if (bagdat[bag].Gt == goldtime)
+						bagdat[bag].gt++;
+						if (bagdat[bag].gt == goldtime)
 							removebag(bag);
-						else if (bagdat[bag].V < 9 && bagdat[bag].Gt < goldtime - 10)
-							if ((dig.Monster.getfield(bagdat[bag].H, bagdat[bag].V + 1) & 0x2000) == 0)
-								bagdat[bag].Gt = goldtime - 10;
+						else if (bagdat[bag].v < 9 && bagdat[bag].gt < goldtime - 10)
+							if ((dig.Monster.getfield(bagdat[bag].h, bagdat[bag].v + 1) & 0x2000) == 0)
+								bagdat[bag].gt = goldtime - 10;
 					}
 					else
 						updatebag(bag);
 				}
 			for (bag = 1; bag < 8; bag++)
 			{
-				if (bagdat[bag].Dir == 6 && bagdat[bag].Exist)
+				if (bagdat[bag].dir == 6 && bagdat[bag].exist)
 					soundfalloffflag = false;
-				if (bagdat[bag].Dir != 6 && bagdat[bag].Wobbling && bagdat[bag].Exist)
+				if (bagdat[bag].dir != 6 && bagdat[bag].wobbling && bagdat[bag].exist)
 					soundwobbleoffflag = false;
 			}
 			if (soundfalloffflag)
@@ -126,25 +123,25 @@
 			for (bag = 1; bag < 8; bag++)
 			{
 				if (dig.Main.getcplayer() == 0)
-					bagdat[bag].CopyFrom(bagdat1[bag]);
+					bagdat[bag].copyFrom(bagdat1[bag]);
 				else
-					bagdat[bag].CopyFrom(bagdat2[bag]);
-				if (bagdat[bag].Exist)
-					dig.Sprite.movedrawspr(bag, bagdat[bag].X, bagdat[bag].Y);
+					bagdat[bag].copyFrom(bagdat2[bag]);
+				if (bagdat[bag].exist)
+					dig.Sprite.movedrawspr(bag, bagdat[bag].x, bagdat[bag].y);
 			}
 		}
 
 		internal int getbagdir(int bag)
 		{
-			if (bagdat[bag].Exist)
-				return bagdat[bag].Dir;
+			if (bagdat[bag].exist)
+				return bagdat[bag].dir;
 			return -1;
 		}
 
 		void getgold(int bag)
 		{
 			int clbits;
-			clbits = dig.Drawing.drawgold(bag, 6, bagdat[bag].X, bagdat[bag].Y);
+			clbits = dig.Drawing.drawgold(bag, 6, bagdat[bag].x, bagdat[bag].y);
 			dig.Main.incpenalty();
 			if ((clbits & 1) != 0)
 			{
@@ -161,8 +158,8 @@
 		{
 			int bag, n = 0;
 			for (bag = 1; bag < 8; bag++)
-				if (bagdat[bag].Exist && bagdat[bag].Gt < 10 &&
-				    (bagdat[bag].Gt != 0 || bagdat[bag].Wobbling))
+				if (bagdat[bag].exist && bagdat[bag].gt < 10 &&
+				    (bagdat[bag].gt != 0 || bagdat[bag].wobbling))
 					n++;
 			return n;
 		}
@@ -173,49 +170,49 @@
 			pushcount = 0;
 			goldtime = 150 - dig.Main.levof10() * 10;
 			for (bag = 1; bag < 8; bag++)
-				bagdat[bag].Exist = false;
+				bagdat[bag].exist = false;
 			bag = 1;
 			for (x = 0; x < 15; x++)
 			for (y = 0; y < 10; y++)
 				if (dig.Main.getlevch(x, y, dig.Main.levplan()) == 'B')
 					if (bag < 8)
 					{
-						bagdat[bag].Exist = true;
-						bagdat[bag].Gt = 0;
-						bagdat[bag].Fallh = 0;
-						bagdat[bag].Dir = -1;
-						bagdat[bag].Wobbling = false;
-						bagdat[bag].Wt = 15;
-						bagdat[bag].Unfallen = true;
-						bagdat[bag].X = x * 20 + 12;
-						bagdat[bag].Y = y * 18 + 18;
-						bagdat[bag].H = x;
-						bagdat[bag].V = y;
-						bagdat[bag].Xr = 0;
-						bagdat[bag++].Yr = 0;
+						bagdat[bag].exist = true;
+						bagdat[bag].gt = 0;
+						bagdat[bag].fallh = 0;
+						bagdat[bag].dir = -1;
+						bagdat[bag].wobbling = false;
+						bagdat[bag].wt = 15;
+						bagdat[bag].unfallen = true;
+						bagdat[bag].x = x * 20 + 12;
+						bagdat[bag].y = y * 18 + 18;
+						bagdat[bag].h = x;
+						bagdat[bag].v = y;
+						bagdat[bag].xr = 0;
+						bagdat[bag++].yr = 0;
 					}
 			if (dig.Main.getcplayer() == 0)
-				for (var i = 1; i < 8; i++)
-					bagdat1[i].CopyFrom(bagdat[i]);
+				for (int i = 1; i < 8; i++)
+					bagdat1[i].copyFrom(bagdat[i]);
 			else
-				for (var i = 1; i < 8; i++)
-					bagdat2[i].CopyFrom(bagdat[i]);
+				for (int i = 1; i < 8; i++)
+					bagdat2[i].copyFrom(bagdat[i]);
 		}
 
 		bool pushbag(int bag, int dir)
 		{
 			int x, y, h, v, ox, oy, clbits;
-			var push = true;
-			ox = x = bagdat[bag].X;
-			oy = y = bagdat[bag].Y;
-			h = bagdat[bag].H;
-			v = bagdat[bag].V;
-			if (bagdat[bag].Gt != 0)
+			bool push = true;
+			ox = x = bagdat[bag].x;
+			oy = y = bagdat[bag].y;
+			h = bagdat[bag].h;
+			v = bagdat[bag].v;
+			if (bagdat[bag].gt != 0)
 			{
 				getgold(bag);
 				return true;
 			}
-			if (bagdat[bag].Dir == 6 && (dir == 4 || dir == 0))
+			if (bagdat[bag].dir == 6 && (dir == 4 || dir == 0))
 			{
 				clbits = dig.Drawing.drawgold(bag, 3, x, y);
 				dig.Main.incpenalty();
@@ -239,9 +236,9 @@
 						x -= 4;
 						break;
 					case 6:
-						if (bagdat[bag].Unfallen)
+						if (bagdat[bag].unfallen)
 						{
-							bagdat[bag].Unfallen = false;
+							bagdat[bag].unfallen = false;
 							dig.Drawing.drawsquareblob(x, y);
 							dig.Drawing.drawtopblob(x, y + 21);
 						}
@@ -264,8 +261,8 @@
 						break;
 					case 0:
 					case 4:
-						bagdat[bag].Wt = 15;
-						bagdat[bag].Wobbling = false;
+						bagdat[bag].wt = 15;
+						bagdat[bag].wobbling = false;
 						clbits = dig.Drawing.drawgold(bag, 0, x, y);
 						dig.Main.incpenalty();
 						pushcount = 1;
@@ -289,15 +286,15 @@
 						break;
 				}
 				if (push)
-					bagdat[bag].Dir = dir;
+					bagdat[bag].dir = dir;
 				else
-					bagdat[bag].Dir = dig.reversedir(dir);
-				bagdat[bag].X = x;
-				bagdat[bag].Y = y;
-				bagdat[bag].H = (x - 12) / 20;
-				bagdat[bag].V = (y - 18) / 18;
-				bagdat[bag].Xr = (x - 12) % 20;
-				bagdat[bag].Yr = (y - 18) % 18;
+					bagdat[bag].dir = dig.reversedir(dir);
+				bagdat[bag].x = x;
+				bagdat[bag].y = y;
+				bagdat[bag].h = (x - 12) / 20;
+				bagdat[bag].v = (y - 18) / 18;
+				bagdat[bag].xr = (x - 12) % 20;
+				bagdat[bag].yr = (y - 18) % 18;
 			}
 			return push;
 		}
@@ -305,7 +302,7 @@
 		internal bool pushbags(int dir, int bits)
 		{
 			int bag, bit;
-			var push = true;
+			bool push = true;
 			for (bag = 1, bit = 2; bag < 8; bag++, bit <<= 1)
 				if ((bits & bit) != 0)
 					if (!pushbag(bag, dir))
@@ -316,10 +313,10 @@
 		internal bool pushudbags(int bits)
 		{
 			int bag, b;
-			var push = true;
+			bool push = true;
 			for (bag = 1, b = 2; bag < 8; bag++, b <<= 1)
 				if ((bits & b) != 0)
-					if (bagdat[bag].Gt != 0)
+					if (bagdat[bag].gt != 0)
 						getgold(bag);
 					else
 						push = false;
@@ -328,9 +325,9 @@
 
 		void removebag(int bag)
 		{
-			if (bagdat[bag].Exist)
+			if (bagdat[bag].exist)
 			{
-				bagdat[bag].Exist = false;
+				bagdat[bag].exist = false;
 				dig.Sprite.erasespr(bag);
 			}
 		}
@@ -339,34 +336,34 @@
 		{
 			int bag, b;
 			for (bag = 1, b = 2; bag < 8; bag++, b <<= 1)
-				if ((bagdat[bag].Exist) && ((bits & b) != 0))
+				if ((bagdat[bag].exist) && ((bits & b) != 0))
 					removebag(bag);
 		}
 
 		void updatebag(int bag)
 		{
 			int x, h, xr, y, v, yr, wbl;
-			x = bagdat[bag].X;
-			h = bagdat[bag].H;
-			xr = bagdat[bag].Xr;
-			y = bagdat[bag].Y;
-			v = bagdat[bag].V;
-			yr = bagdat[bag].Yr;
-			switch (bagdat[bag].Dir)
+			x = bagdat[bag].x;
+			h = bagdat[bag].h;
+			xr = bagdat[bag].xr;
+			y = bagdat[bag].y;
+			v = bagdat[bag].v;
+			yr = bagdat[bag].yr;
+			switch (bagdat[bag].dir)
 			{
 				case -1:
 					if (y < 180 && xr == 0)
 					{
-						if (bagdat[bag].Wobbling)
+						if (bagdat[bag].wobbling)
 						{
-							if (bagdat[bag].Wt == 0)
+							if (bagdat[bag].wt == 0)
 							{
-								bagdat[bag].Dir = 6;
+								bagdat[bag].dir = 6;
 								dig.Sound.soundfall();
 								break;
 							}
-							bagdat[bag].Wt--;
-							wbl = bagdat[bag].Wt % 8;
+							bagdat[bag].wt--;
+							wbl = bagdat[bag].wt % 8;
 							if (!((wbl & 1) != 0))
 							{
 								dig.Drawing.drawgold(bag, wblanim[wbl >> 1], x, y);
@@ -376,12 +373,12 @@
 						}
 						else if ((dig.Monster.getfield(h, v + 1) & 0xfdf) != 0xfdf)
 							if (!dig.checkdiggerunderbag(h, v + 1))
-								bagdat[bag].Wobbling = true;
+								bagdat[bag].wobbling = true;
 					}
 					else
 					{
-						bagdat[bag].Wt = 15;
-						bagdat[bag].Wobbling = false;
+						bagdat[bag].wt = 15;
+						bagdat[bag].wobbling = false;
 					}
 					break;
 				case 0:
@@ -389,8 +386,8 @@
 					if (xr == 0)
 						if (y < 180 && (dig.Monster.getfield(h, v + 1) & 0xfdf) != 0xfdf)
 						{
-							bagdat[bag].Dir = 6;
-							bagdat[bag].Wt = 0;
+							bagdat[bag].dir = 6;
+							bagdat[bag].wt = 0;
 							dig.Sound.soundfall();
 						}
 						else
@@ -398,20 +395,20 @@
 					break;
 				case 6:
 					if (yr == 0)
-						bagdat[bag].Fallh++;
+						bagdat[bag].fallh++;
 					if (y >= 180)
 						baghitground(bag);
 					else if ((dig.Monster.getfield(h, v + 1) & 0xfdf) == 0xfdf)
 						if (yr == 0)
 							baghitground(bag);
-					dig.Monster.checkmonscared(bagdat[bag].H);
+					dig.Monster.checkmonscared(bagdat[bag].h);
 					break;
 			}
-			if (bagdat[bag].Dir != -1)
-				if (bagdat[bag].Dir != 6 && pushcount != 0)
+			if (bagdat[bag].dir != -1)
+				if (bagdat[bag].dir != 6 && pushcount != 0)
 					pushcount--;
 				else
-					pushbag(bag, bagdat[bag].Dir);
+					pushbag(bag, bagdat[bag].dir);
 		}
 	}
 }

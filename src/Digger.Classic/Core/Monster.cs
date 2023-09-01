@@ -1,4 +1,4 @@
-﻿namespace DiggerClassic.Core
+namespace DiggerClassic
 {
 	internal sealed class Monster
 	{

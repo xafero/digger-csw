@@ -1,33 +1,24 @@
-﻿using System;
+using System;
 
-namespace DiggerClassic.Core
+namespace DiggerClassic
 {
 	internal sealed class Monsters
 	{
+
 		Digger dig;
-		Monster[] mondat;
-		int nextmonster;
-		int totalmonsters;
-		int maxmononscr;
-		int nextmontime;
-		int mongaptime;
-		bool unbonusflag;
-		bool mongotgold;
 
-		private Monsters()
-		{
-			// 6 monsters
-			mondat = new Monster[] { new(), new(), new(), new(), new(), new() };
-			maxmononscr = 0;
-			nextmontime = 0;
-			mongaptime = 0;
-			unbonusflag = false;
-			mongotgold = false;
-			totalmonsters = 0;
-			nextmonster = 0;
-		}
+		Monster[] mondat = { new Monster(), new Monster(), new Monster(), new Monster(), new Monster(), new Monster() }; // [6]
 
-		internal Monsters(Digger d) : this()
+		int nextmonster = 0;
+		int totalmonsters = 0;
+		int maxmononscr = 0;
+		int nextmontime = 0;
+		int mongaptime = 0;
+
+		bool unbonusflag = false;
+		bool mongotgold = false;
+
+		internal Monsters(Digger d)
 		{
 			dig = d;
 		}
@@ -36,8 +27,8 @@ namespace DiggerClassic.Core
 		{
 			int m, b;
 			for (m = 0, b = 256; m < 6; m++, b <<= 1)
-				if ((bits & b) != 0 && mondat[mon].dir == mondat[m].dir &&
-				    mondat[m].stime == 0 && mondat[mon].stime == 0)
+				if (((bits & b) != 0) && (mondat[mon].dir == mondat[m].dir) && 
+				    (mondat[m].stime == 0) && (mondat[mon].stime == 0))
 					mondat[m].dir = dig.reversedir(mondat[m].dir);
 		}
 
@@ -245,6 +236,7 @@ namespace DiggerClassic.Core
 			monoy = mondat[mon].y;
 			if (mondat[mon].xr == 0 && mondat[mon].yr == 0)
 			{
+
 				/* If we are here the monster needs to know which way to turn next. */
 
 				/* Turn hobbin back into nobbin if it's had its time */

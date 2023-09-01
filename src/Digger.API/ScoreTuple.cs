@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
-namespace DiggerAPI
+namespace DiggerClassic
 {
-	public sealed class ScoreTuple : Tuple<string, int>
-	{
-		public ScoreTuple(string key, int value) : base(key, value)
-		{
-		}
-	}
+    public class ScoreTuple : Tuple<string, int>
+    {
+        public ScoreTuple(string key, int value) : base(key, value)
+        {
+        }
+    }
 }

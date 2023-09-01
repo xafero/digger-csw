@@ -1,7 +1,8 @@
-﻿namespace DiggerClassic.Graphics
+namespace DiggerClassic
 {
 	internal static class Alpha
 	{
+
 		static string copyright = "Portions Copyright(c) 1983 Windmill Software Inc.";
 
 		static int[] textoffdat =
@@ -636,6 +637,7 @@
 			0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00
 		};
+
 
 		internal static short[][] ascii2cga =
 		{

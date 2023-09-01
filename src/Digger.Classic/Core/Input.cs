@@ -1,36 +1,41 @@
-﻿namespace DiggerClassic.Core
+namespace DiggerClassic
 {
-	internal class Input
+	class Input
 	{
-		internal bool leftpressed;
-		internal bool rightpressed;
-		internal bool uppressed;
-		internal bool downpressed;
-		internal bool f1pressed;
-		internal bool firepressed;
+
+		Digger dig;
+
+		internal bool leftpressed = false;
+		internal bool rightpressed = false;
+		internal bool uppressed = false;
+		internal bool downpressed = false;
+		internal bool f1pressed = false;
+		internal bool firepressed = false;
 		internal bool minuspressed;
 		internal bool pluspressed;
 		internal bool f10pressed;
-		internal bool escape;
-		internal int keypressed;
+		internal bool escape = false;
+		internal int keypressed = 0;
 		internal int akeypressed;
 		int dynamicdir = -1;
 		int staticdir = -1;
 		int joyx = 0;
 		int joyy = 0;
+
 		bool joybut1 = false;
 		bool joybut2 = false;
-		int keydir;
+
+		int keydir = 0;
 		int jleftthresh = 0;
 		int jupthresh = 0;
 		int jrightthresh = 0;
 		int jdownthresh = 0;
 		int joyanax = 0;
 		int joyanay = 0;
-		internal bool firepflag;
-		bool joyflag;
+		internal bool firepflag = false;
 
-		Digger dig;
+		bool joyflag = false;
+
 
 		internal Input(Digger d)
 		{
@@ -51,6 +56,20 @@
 			}
 			if (f10pressed)
 				escape = true;
+
+/*  while (kbhit()) {
+	akeypressed=getkey();
+	switch (akeypressed) {
+	  case 321: // F7
+		musicflag=!musicflag;
+		break;
+	  case 323: // F9
+		soundflag=!soundflag;
+		break;
+	  case 324: // F10
+		escape=true;
+	}
+  } */
 		}
 
 		internal void detectjoy()
@@ -64,12 +83,34 @@
 			int k;
 			if ((make == ' ') || ((make >= 'a') && (make <= 'z')) || ((make >= '0') && (make <= '9')))
 				return make;
-			return 0;
+			else
+				return 0;
+/*  if (make<2 || make>=58)
+	return 0;
+  if (kbhit())
+	k=getkey();
+  else
+	return 0;
+  if (k>='a' && k<='A')
+	k+='A'-'a'; */
 		}
 
 		internal int getdir()
 		{
-			var bp2 = keydir;
+			int bp2 = keydir;
+/*  if (joyflag) {
+	bp2=-1;
+	if (joyx<jleftthresh)
+	  bp2=4;
+	if (joyx>jrightthresh)
+	  bp2=0;
+	if (joyx>=jleftthresh && joyx<=jrightthresh) {
+	  if (joyy<jupthresh)
+		bp2=2;
+	  if (joyy>jdownthresh)
+		bp2=6;
+	}
+  } */
 			return bp2;
 		}
 
@@ -200,6 +241,7 @@
 
 		internal void readdir()
 		{
+/*  int j; */
 			keydir = staticdir;
 			if (dynamicdir != -1)
 				keydir = dynamicdir;
@@ -209,6 +251,23 @@
 			else
 				firepflag = false;
 			firepressed = false;
+/*  if (joyflag) {
+	incpenalty();
+	incpenalty();
+	joyanay=0;
+	joyanax=0;
+	for (j=0;j<4;j++) {
+	  readjoy();
+	  joyanax+=joyx;
+	  joyanay+=joyy;
+	}
+	joyx=joyanax>>2;
+	joyy=joyanay>>2;
+	if (joybut1)
+	  firepflag=true;
+	else
+	  firepflag=false;
+  } */
 		}
 
 		void readjoy()
@@ -226,7 +285,13 @@
 
 		internal bool teststart()
 		{
-			var startf = false;
+/*  int j; */
+			bool startf = false;
+/*  if (joyflag) {
+	readjoy();
+	if (joybut1)
+	  startf=true;
+  }  */
 			if (keypressed != 0 && (keypressed & 0x80) == 0 && keypressed != 27)
 			{
 				startf = true;
@@ -235,6 +300,35 @@
 			}
 			if (!startf)
 				return false;
+/*  if (joyflag) {
+	joyanay=0;
+	joyanax=0;
+	for (j=0;j<50;j++) {
+	  readjoy();
+	  joyanax+=joyx;
+	  joyanay+=joyy;
+	}
+	joyx=joyanax/50;
+	joyy=joyanay/50;
+	jleftthresh=joyx-35;
+	if (jleftthresh<0)
+	  jleftthresh=0;
+	jleftthresh+=10;
+	jupthresh=joyy-35;
+	if (jupthresh<0)
+	  jupthresh=0;
+	jupthresh+=10;
+	jrightthresh=joyx+35;
+	if (jrightthresh>255)
+	  jrightthresh=255;
+	jrightthresh-=10;
+	jdownthresh=joyy+35;
+	if (jdownthresh>255)
+	  jdownthresh=255;
+	jdownthresh-=10;
+	joyanax=joyx;
+	joyanay=joyy;
+  } */
 			return true;
 		}
 	}

@@ -1,51 +1,27 @@
-﻿using System;
+using System;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using DiggerAPI;
-using DiggerClassic.Core;
 
-namespace DiggerClassic.Score
+namespace DiggerClassic
 {
-	public class Scores : IScores
+	public sealed class Scores : IScores
 	{
-		public string[] ScoreInit { get; } = new string[11];
-		public long[] ScoreHigh { get; } = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-		public ScoreTuple[] ScoreTuples
-		{
-			set
-			{
-				var @in = new string[10];
-				var sc = new int[10];
-				for (var i = 0; i < Math.Min(value.Length, 10); i++)
-				{
-					@in[i] = value[i].Item1;
-					sc[i] = value[i].Item2;
-				}
-				for (var i = 0; i < 10; i++)
-				{
-					ScoreInit[i + 1] = @in[i];
-					ScoreHigh[i + 2] = sc[i];
-				}
-			}
-		}
-
+		Digger dig;
 		internal ScoreTuple[] scores;
 		string substr;
+
 		char[] highbuf = new char[10];
-		long scoret;
-		long score1;
-		long score2;
-		long nextbs1;
-		long nextbs2;
+		internal long[] scorehigh = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // [12]
+		internal string[] scoreinit = new string[11];
+		long scoret = 0, score1 = 0, score2 = 0, nextbs1 = 0, nextbs2 = 0;
 		string hsbuf;
 		char[] scorebuf = new char[512];
 		int bonusscore = 20000;
-		bool gotinitflag;
+		bool gotinitflag = false;
 
-		Digger dig;
-
-		public Scores(Digger d)
+		internal Scores(Digger d)
 		{
 			dig = d;
 		}
@@ -54,11 +30,39 @@ namespace DiggerClassic.Score
 		{
 			if (dig.subaddr != null)
 			{
-				var ms = 16 + (int)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() % (65536 - 16));
+				int ms = 16 + (int)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() % (65536 - 16));
 				substr = n + '+' + s + '+' + ms + '+' + ((ms + 32768) * s) % 65536;
-				// TODO Send to server?!
+				// new Thread (this.run).Start ();
 			}
 			return scores;
+		}
+
+		public void _updatescores(ScoreTuple[] o)
+		{
+
+			if (o == null)
+				return;
+
+			try
+			{
+				string[] @in = new string[10];
+				int[] sc = new int[10];
+				for (int i = 0; i < 10; i++)
+				{
+					@in[i] = o[i].Item1;
+					sc[i] = o[i].Item2;
+				}
+				for (int i = 0; i < 10; i++)
+				{
+					scoreinit[i + 1] = @in[i];
+					scorehigh[i + 2] = sc[i];
+				}
+			}
+			catch (System.Exception e)
+			{
+			}
+			;
+
 		}
 
 		internal void addscore(int score)
@@ -88,10 +92,9 @@ namespace DiggerClassic.Score
 					writenum(score2, 236, 0, 6, 1);
 				else
 					writenum(score2, 248, 0, 6, 1);
-
-				/* Player 2 doesn't get the life until >20,000 ! */
 				if (score2 > nextbs2)
 				{
+					/* Player 2 doesn't get the life until >20,000 ! */
 					if (dig.Main.getlives(2) < 5)
 					{
 						dig.Main.addlife(2);
@@ -115,7 +118,7 @@ namespace DiggerClassic.Score
 					writenum(score2, 248, 0, 6, 3);
 		}
 
-		internal void endofgame()
+		internal async Task endofgame()
 		{
 			int i, j, z;
 			addscore(0);
@@ -123,7 +126,7 @@ namespace DiggerClassic.Score
 				scoret = score1;
 			else
 				scoret = score2;
-			if (scoret > ScoreHigh[11])
+			if (scoret > scorehigh[11])
 			{
 				dig.Pc.gclear();
 				drawscores();
@@ -134,10 +137,10 @@ namespace DiggerClassic.Score
 					dig.Main.pldispbuf += "2";
 				dig.Drawing.outtext(dig.Main.pldispbuf, 108, 0, 2, true);
 				dig.Drawing.outtext(" NEW HIGH SCORE ", 64, 40, 2, true);
-				getinitials();
-				_updatescores(_submit(ScoreInit[0], (int)scoret));
+				await getinitials();
+				_updatescores(_submit(scoreinit[0], (int)scoret));
 				shufflehigh();
-				ScoreStorage.WriteToStorage(this);
+				ScoreStorage.writeToStorage(this);
 			}
 			else
 			{
@@ -145,20 +148,19 @@ namespace DiggerClassic.Score
 				dig.Drawing.outtext("GAME OVER", 104, 0, 3, true);
 				_updatescores(_submit("...", (int)scoret));
 				dig.Sound.killsound();
-
-				/* Number of times screen flashes * 2 */
-				for (j = 0; j < 20; j++)
+				for (j = 0; j < 20; j++) /* Number of times screen flashes * 2 */
 				for (i = 0; i < 2; i++)
 				{
+					//i<8;i++) {
 					dig.Sprite.setretr(true);
+//		dig.Pc.ginten(1);
 					dig.Pc.gpal(1 - (j & 1));
 					dig.Sprite.setretr(false);
-
-					/* A delay loop */
-					for (z = 0; z < 111; z++) ;
+					for (z = 0; z < 111; z++) ; /* A delay loop */
 					dig.Pc.gpal(0);
+//		dig.Pc.ginten(0);
 					dig.Pc.ginten(1 - i & 1);
-					dig.newframe();
+					await dig.newframe();
 				}
 				dig.Sound.setupsound();
 				dig.Drawing.outtext("         ", 104, 0, 3, true);
@@ -166,24 +168,30 @@ namespace DiggerClassic.Score
 			}
 		}
 
-		internal void _updatescores(ScoreTuple[] submit)
+		async Task flashywait(int n)
 		{
-			throw new NotImplementedException();
-		}
+/*  int i,gt,cx,p=0,k=1;
+  int gap=19;
+  dig.Sprite.setretr(false);
+  for (i=0;i<(n<<1);i++) {
+	for (cx=0;cx<dig.Sound.volume;cx++) {
+	  dig.Pc.gpal(p=1-p);
+	  for (gt=0;gt<gap;gt++);
+	}
+	} */
 
-		void flashywait(int n)
-		{
 			try
 			{
-				// TODO Remove sleep!
-				Thread.Sleep(n * 2);
+				// TODO Thread.Sleep (n*2);
+				await Task.Delay(n * 2, dig.Token);
 			}
 			catch (Exception e)
 			{
 			}
+
 		}
 
-		int getinitial(int x, int y)
+		async Task<int> getinitial(int x, int y)
 		{
 			int i, j;
 			dig.Input.keypressed = 0;
@@ -194,7 +202,7 @@ namespace DiggerClassic.Score
 				{
 					if ((dig.Input.keypressed & 0x80) == 0 && dig.Input.keypressed != 0)
 						return dig.Input.keypressed;
-					flashywait(15);
+					await flashywait(15);
 				}
 				for (i = 0; i < 40; i++)
 				{
@@ -203,20 +211,20 @@ namespace DiggerClassic.Score
 						dig.Pc.gwrite(x, y, '_', 3, true);
 						return dig.Input.keypressed;
 					}
-					flashywait(15);
+					await flashywait(15);
 				}
 			}
 			gotinitflag = true;
 			return 0;
 		}
 
-		void getinitials()
+		async Task getinitials()
 		{
 			int k, i;
 			dig.Drawing.outtext("ENTER YOUR", 100, 70, 3, true);
 			dig.Drawing.outtext(" INITIALS", 100, 90, 3, true);
 			dig.Drawing.outtext("_ _ _", 128, 130, 3, true);
-			ScoreInit[0] = "...";
+			scoreinit[0] = "...";
 			dig.Sound.killsound();
 			gotinitflag = false;
 			for (i = 0; i < 3; i++)
@@ -224,7 +232,7 @@ namespace DiggerClassic.Score
 				k = 0;
 				while (k == 0 && !gotinitflag)
 				{
-					k = getinitial(i * 24 + 128, 130);
+					k = await getinitial(i * 24 + 128, 130);
 					if (i != 0 && k == 8)
 						i--;
 					k = dig.Input.getasciikey(k);
@@ -232,19 +240,19 @@ namespace DiggerClassic.Score
 				if (k != 0)
 				{
 					dig.Pc.gwrite(i * 24 + 128, 130, k, 3, true);
-					var sb = new StringBuilder(ScoreInit[0]);
+					StringBuilder sb = new StringBuilder(scoreinit[0]);
 					sb[i] = (char)k;
-					ScoreInit[0] = sb.ToString();
+					scoreinit[0] = sb.ToString();
 				}
 			}
 			dig.Input.keypressed = 0;
 			for (i = 0; i < 20; i++)
-				flashywait(15);
+				await flashywait(15);
 			dig.Sound.setupsound();
 			dig.Pc.gclear();
 			dig.Pc.gpal(0);
 			dig.Pc.ginten(0);
-			dig.newframe();
+			await dig.newframe(); // needed by Java version!!
 			dig.Sprite.setretr(true);
 		}
 
@@ -256,27 +264,28 @@ namespace DiggerClassic.Score
 		internal void loadscores()
 		{
 			int p = 1, i, x;
+			//readscores();
 			for (i = 1; i < 11; i++)
 			{
 				for (x = 0; x < 3; x++)
-					ScoreInit[i] = "...";
+					scoreinit[i] = "..."; //  scorebuf[p++];	--- zmienic
 				p += 2;
 				for (x = 0; x < 6; x++)
 					highbuf[x] = scorebuf[p++];
-				ScoreHigh[i + 1] = 0;
+				scorehigh[i + 1] = 0; //atol(highbuf);
 			}
 			if (scorebuf[0] != 's')
 				for (i = 0; i < 11; i++)
 				{
-					ScoreHigh[i + 1] = 0;
-					ScoreInit[i] = "...";
+					scorehigh[i + 1] = 0;
+					scoreinit[i] = "...";
 				}
 		}
 
 		string numtostring(long n)
 		{
 			int x;
-			var p = "";
+			string p = "";
 			for (x = 0; x < 6; x++)
 			{
 				p = Convert.ToString(n % 10) + p;
@@ -336,7 +345,7 @@ namespace DiggerClassic.Score
 			col = 2;
 			for (i = 1; i < 11; i++)
 			{
-				hsbuf = ScoreInit[i] + "  " + numtostring(ScoreHigh[i + 1]);
+				hsbuf = scoreinit[i] + "  " + numtostring(scorehigh[i + 1]);
 				dig.Drawing.outtext(hsbuf, 16, 31 + 13 * i, col);
 				col = 1;
 			}
@@ -346,15 +355,15 @@ namespace DiggerClassic.Score
 		{
 			int i, j;
 			for (j = 10; j > 1; j--)
-				if (scoret < ScoreHigh[j])
+				if (scoret < scorehigh[j])
 					break;
 			for (i = 10; i > j; i--)
 			{
-				ScoreHigh[i + 1] = ScoreHigh[i];
-				ScoreInit[i] = ScoreInit[i - 1];
+				scorehigh[i + 1] = scorehigh[i];
+				scoreinit[i] = scoreinit[i - 1];
 			}
-			ScoreHigh[j + 1] = scoret;
-			ScoreInit[j] = ScoreInit[0];
+			scorehigh[j + 1] = scoret;
+			scoreinit[j] = scoreinit[0];
 		}
 
 		internal void writecurscore(int bp6)
@@ -374,7 +383,7 @@ namespace DiggerClassic.Score
 			{
 				d = (int)(n % 10);
 				if (w > 1 || d > 0)
-					dig.Pc.gwrite(xp, y, d + '0', c, false);
+					dig.Pc.gwrite(xp, y, d + '0', c, false); //true
 				n /= 10;
 				w--;
 				xp -= 12;
@@ -388,6 +397,14 @@ namespace DiggerClassic.Score
 			scoret = 0;
 			nextbs1 = bonusscore;
 			nextbs2 = bonusscore;
+		}
+
+		public string[] ScoreInit => scoreinit;
+		public long[] ScoreHigh => scorehigh;
+		public ScoreTuple[] ScoreTuples
+		{
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
 		}
 	}
 }

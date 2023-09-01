@@ -1,40 +1,36 @@
-﻿namespace DiggerClassic.Core
+namespace DiggerClassic
 {
 	internal sealed class Bag
 	{
-		internal int X;
-		internal int Y;
-		internal int H;
-		internal int V;
-		internal int Xr;
-		internal int Yr;
-		internal int Dir;
-		internal int Wt;
-		internal int Gt;
-		internal int Fallh;
-		internal bool Wobbling;
-		internal bool Unfallen;
-		internal bool Exist;
+		internal int x;
+		internal int y;
+		internal int h;
+		internal int v;
+		internal int xr;
+		internal int yr;
+		internal int dir;
+		internal int wt;
+		internal int gt;
+		internal int fallh;
+		internal bool wobbling;
+		internal bool unfallen;
+		internal bool exist;
 
-		public Bag()
+		internal void copyFrom(Bag t)
 		{
-		}
-
-		public void CopyFrom(Bag t)
-		{
-			X = t.X;
-			Y = t.Y;
-			H = t.H;
-			V = t.V;
-			Xr = t.Xr;
-			Yr = t.Yr;
-			Dir = t.Dir;
-			Wt = t.Wt;
-			Gt = t.Gt;
-			Fallh = t.Fallh;
-			Wobbling = t.Wobbling;
-			Unfallen = t.Unfallen;
-			Exist = t.Exist;
+			x = t.x;
+			y = t.y;
+			h = t.h;
+			v = t.v;
+			xr = t.xr;
+			yr = t.yr;
+			dir = t.dir;
+			wt = t.wt;
+			gt = t.gt;
+			fallh = t.fallh;
+			wobbling = t.wobbling;
+			unfallen = t.unfallen;
+			exist = t.exist;
 		}
 	}
 }

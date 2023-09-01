@@ -1,12 +1,15 @@
-﻿using System.Threading;
+using System.Threading.Tasks;
 
-namespace DiggerClassic.Core
+namespace DiggerClassic
 {
-	/// <summary>
-	/// Sound has not been ported yet
-	/// </summary>
+// sound has not been ported yet
+
 	internal sealed class Sound
 	{
+
+		Digger dig;
+
+
 		int wavetype = 0;
 		int t2val = 0;
 		int t0val = 0;
@@ -16,73 +19,121 @@ namespace DiggerClassic.Core
 		int timercount = 0;
 		int pulsewidth = 1;
 		internal int volume = 0;
-		int timerclock = 0;
-		internal bool soundflag = true;
-		internal bool musicflag = true;
-		bool sndflag = false;
-		bool soundpausedflag = false;
+
+		int timerclock = 0; // sint3
+
+		internal bool soundflag = true, musicflag = true;
+
+		bool sndflag = false, soundpausedflag = false;
+
 		bool soundlevdoneflag = false;
-		int nljpointer = 0;
-		int nljnoteduration = 0;
+		int nljpointer = 0, nljnoteduration = 0;
 
-		int[] newlevjingle =
-		{
-			0x8e8, 0x712, 0x5f2, 0x7f0, 0x6ac, 0x54c, 0x712, 0x5f2, 0x4b8, 0x474, 0x474
-		}; // [11]
+		int[] newlevjingle = { 0x8e8, 0x712, 0x5f2, 0x7f0, 0x6ac, 0x54c, 0x712, 0x5f2, 0x4b8, 0x474, 0x474 }; // [11]
 
-		bool soundfallflag = false;
-		bool soundfallf = false;
-		int soundfallvalue;
-		int soundfalln = 0;
+		bool soundfallflag = false, soundfallf = false;
+		int soundfallvalue, soundfalln = 0;
+
 		bool soundbreakflag = false;
-		int soundbreakduration = 0;
-		int soundbreakvalue = 0;
+		int soundbreakduration = 0, soundbreakvalue = 0;
+
 		bool soundwobbleflag = false;
 		int soundwobblen = 0;
+
 		bool soundfireflag = false;
-		int soundfirevalue;
-		int soundfiren = 0;
+		int soundfirevalue, soundfiren = 0;
+
 		bool soundexplodeflag = false;
-		int soundexplodevalue;
-		int soundexplodeduration;
+		int soundexplodevalue, soundexplodeduration;
+
 		bool soundbonusflag = false;
 		int soundbonusn = 0;
+
 		bool soundemflag = false;
+
 		bool soundemeraldflag = false;
-		int soundemeraldduration;
-		int emerfreq;
-		int soundemeraldn;
+		int soundemeraldduration, emerfreq, soundemeraldn;
+
 		bool soundgoldflag = false, soundgoldf = false;
-		int soundgoldvalue1;
-		int soundgoldvalue2;
-		int soundgoldduration;
+		int soundgoldvalue1, soundgoldvalue2, soundgoldduration;
+
 		bool soundeatmflag = false;
-		int soundeatmvalue;
-		int soundeatmduration;
-		int soundeatmn;
+		int soundeatmvalue, soundeatmduration, soundeatmn;
+
 		bool soundddieflag = false;
-		int soundddien;
-		int soundddievalue;
+		int soundddien, soundddievalue;
+
 		bool sound1upflag = false;
 		int sound1upduration = 0;
+
 		bool musicplaying = false;
-		int musicp = 0;
-		int tuneno = 0;
-		int noteduration = 0;
-		int notevalue = 0;
-		int musicmaxvol = 0;
-		int musicattackrate = 0;
-		int musicsustainlevel = 0;
-		int musicdecayrate = 0;
-		int musicnotewidth = 0;
-		int musicreleaserate = 0;
-		int musicstage = 0;
-		int musicn = 0;
 
+		int musicp = 0,
+			tuneno = 0,
+			noteduration = 0,
+			notevalue = 0,
+			musicmaxvol = 0,
+			musicattackrate = 0,
+			musicsustainlevel = 0,
+			musicdecayrate = 0,
+			musicnotewidth = 0,
+			musicreleaserate = 0,
+			musicstage = 0,
+			musicn = 0;
+
+/*int bonusjingle[]={	// [321]
+  0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,
+   0xd59,4, 0xbe4,4, 0xa98,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,
+  0x11d1,4, 0xd59,2, 0xa98,2, 0xbe4,4, 0xe24,4,0x11d1,4,0x11d1,2,0x11d1,2,
+  0x11d1,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2, 0xd59,4, 0xbe4,4,
+   0xa98,4, 0xd59,2, 0xa98,2, 0x8e8,10,0xa00,2, 0xa98,2, 0xbe4,2, 0xd59,4,
+   0xa98,4, 0xd59,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,0x11d1,4,
+  0x11d1,2,0x11d1,2, 0xd59,4, 0xbe4,4, 0xa98,4,0x11d1,2,0x11d1,2,0x11d1,4,
+  0x11d1,2,0x11d1,2,0x11d1,4, 0xd59,2, 0xa98,2, 0xbe4,4, 0xe24,4,0x11d1,4,
+  0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,
+   0xd59,4, 0xbe4,4, 0xa98,4, 0xd59,2, 0xa98,2, 0x8e8,10,0xa00,2, 0xa98,2,
+   0xbe4,2, 0xd59,4, 0xa98,4, 0xd59,4, 0xa98,2, 0xa98,2, 0xa98,4, 0xa98,2,
+   0xa98,2, 0xa98,4, 0xa98,2, 0xa98,2, 0xa98,4, 0x7f0,4, 0xa98,4, 0x7f0,4,
+   0xa98,4, 0x7f0,4, 0xa98,4, 0xbe4,4, 0xd59,4, 0xe24,4, 0xfdf,4, 0xa98,2,
+   0xa98,2, 0xa98,4, 0xa98,2, 0xa98,2, 0xa98,4, 0xa98,2, 0xa98,2, 0xa98,4,
+   0x7f0,4, 0xa98,4, 0x7f0,4, 0xa98,4, 0x7f0,4, 0x8e8,4, 0x970,4, 0x8e8,4,
+   0x970,4, 0x8e8,4, 0xa98,2, 0xa98,2, 0xa98,4, 0xa98,2, 0xa98,2, 0xa98,4,
+   0xa98,2, 0xa98,2, 0xa98,4, 0x7f0,4, 0xa98,4, 0x7f0,4, 0xa98,4, 0x7f0,4,
+   0xa98,4, 0xbe4,4, 0xd59,4, 0xe24,4, 0xfdf,4, 0xa98,2, 0xa98,2, 0xa98,4,
+   0xa98,2, 0xa98,2, 0xa98,4, 0xa98,2, 0xa98,2, 0xa98,4, 0x7f0,4, 0xa98,4,
+   0x7f0,4, 0xa98,4, 0x7f0,4, 0x8e8,4, 0x970,4, 0x8e8,4, 0x970,4, 0x8e8,4,
+  0x7d64};
+
+int backgjingle[]={	// [291]
+   0xfdf,2,0x11d1,2, 0xfdf,2,0x1530,2,0x1ab2,2,0x1530,2,0x1fbf,4, 0xfdf,2,
+  0x11d1,2, 0xfdf,2,0x1530,2,0x1ab2,2,0x1530,2,0x1fbf,4, 0xfdf,2, 0xe24,2,
+   0xd59,2, 0xe24,2, 0xd59,2, 0xfdf,2, 0xe24,2, 0xfdf,2, 0xe24,2,0x11d1,2,
+   0xfdf,2,0x11d1,2, 0xfdf,2,0x1400,2, 0xfdf,4, 0xfdf,2,0x11d1,2, 0xfdf,2,
+  0x1530,2,0x1ab2,2,0x1530,2,0x1fbf,4, 0xfdf,2,0x11d1,2, 0xfdf,2,0x1530,2,
+  0x1ab2,2,0x1530,2,0x1fbf,4, 0xfdf,2, 0xe24,2, 0xd59,2, 0xe24,2, 0xd59,2,
+   0xfdf,2, 0xe24,2, 0xfdf,2, 0xe24,2,0x11d1,2, 0xfdf,2,0x11d1,2, 0xfdf,2,
+   0xe24,2, 0xd59,4, 0xa98,2, 0xbe4,2, 0xa98,2, 0xd59,2,0x11d1,2, 0xd59,2,
+  0x1530,4, 0xa98,2, 0xbe4,2, 0xa98,2, 0xd59,2,0x11d1,2, 0xd59,2,0x1530,4,
+   0xa98,2, 0x970,2, 0x8e8,2, 0x970,2, 0x8e8,2, 0xa98,2, 0x970,2, 0xa98,2,
+   0x970,2, 0xbe4,2, 0xa98,2, 0xbe4,2, 0xa98,2, 0xd59,2, 0xa98,4, 0xa98,2,
+   0xbe4,2, 0xa98,2, 0xd59,2,0x11d1,2, 0xd59,2,0x1530,4, 0xa98,2, 0xbe4,2,
+   0xa98,2, 0xd59,2,0x11d1,2, 0xd59,2,0x1530,4, 0xa98,2, 0x970,2, 0x8e8,2,
+   0x970,2, 0x8e8,2, 0xa98,2, 0x970,2, 0xa98,2, 0x970,2, 0xbe4,2, 0xa98,2,
+   0xbe4,2, 0xa98,2, 0xd59,2, 0xa98,4, 0x7f0,2, 0x8e8,2, 0xa98,2, 0xd59,2,
+  0x11d1,2, 0xd59,2,0x1530,4, 0xa98,2, 0xbe4,2, 0xa98,2, 0xd59,2,0x11d1,2,
+   0xd59,2,0x1530,4, 0xa98,2, 0x970,2, 0x8e8,2, 0x970,2, 0x8e8,2, 0xa98,2,
+   0x970,2, 0xa98,2, 0x970,2, 0xbe4,2, 0xa98,2, 0xbe4,2, 0xd59,2, 0xbe4,2,
+   0xa98,4,0x7d64};
+
+int dirge[]={
+  0x7d00, 2,0x11d1, 6,0x11d1, 4,0x11d1, 2,0x11d1, 6, 0xefb, 4, 0xfdf, 2,
+   0xfdf, 4,0x11d1, 2,0x11d1, 4,0x12e0, 2,0x11d1,12,0x7d00,16,0x7d00,16,
+  0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,
+  0x7d00,16,0x7d00,16,0x7d00,16,0x7d64};
+*/
 		bool soundt0flag = false;
-		bool int8flag = false;
 
-		Digger dig;
+		bool int8flag = false;
 
 		internal Sound(Digger d)
 		{
@@ -91,6 +142,9 @@ namespace DiggerClassic.Core
 
 		internal void initsound()
 		{
+//  settimer2(0x20);
+//  setspkrt2();
+//  settimer0(0);
 			wavetype = 2;
 			t0val = 12000;
 			musvol = 8;
@@ -103,10 +157,12 @@ namespace DiggerClassic.Core
 			soundstop();
 			startint8();
 			timerrate = 0x4000;
+//  timer0(0x4000);
 		}
 
 		internal void killsound()
 		{
+			// added by me...
 		}
 
 		internal void music(int tune)
@@ -161,16 +217,28 @@ namespace DiggerClassic.Core
 				switch (tuneno)
 				{
 					case 0:
+//		noteduration=bonusjingle[musicp+1]*3;
 						musicnotewidth = noteduration - 3;
+//		notevalue=bonusjingle[musicp];
 						musicp += 2;
+//		if (bonusjingle[musicp]==0x7d64)
+//		  musicp=0;
 						break;
 					case 1:
+//		noteduration=backgjingle[musicp+1]*6;
 						musicnotewidth = 12;
+//		notevalue=backgjingle[musicp];
 						musicp += 2;
+//		if (backgjingle[musicp]==0x7d64)
+//		  musicp=0;
 						break;
 					case 2:
+//		noteduration=dirge[musicp+1]*10;
 						musicnotewidth = noteduration - 10;
+//		notevalue=dirge[musicp];
 						musicp += 2;
+//		if (dirge[musicp]==0x7d64)
+//		  musicp=0;
 						break;
 				}
 			}
@@ -218,6 +286,7 @@ namespace DiggerClassic.Core
 		void s0killsound()
 		{
 			setsoundt2();
+//  timer2(40);
 			stopint8();
 		}
 
@@ -232,6 +301,7 @@ namespace DiggerClassic.Core
 			if (!soundt0flag && sndflag)
 			{
 				soundt0flag = true;
+//	setspkrt2();
 			}
 		}
 
@@ -241,6 +311,7 @@ namespace DiggerClassic.Core
 			{
 				spkrmode = 0;
 				soundt0flag = false;
+//	setspkrt2();
 			}
 		}
 
@@ -248,8 +319,10 @@ namespace DiggerClassic.Core
 		{
 			if (sndflag)
 			{
+//	timer2(t2val);
 				if (t0val < 1000 && (wavetype == 1 || wavetype == 2))
 					t0val = 1000;
+//	timer0(t0val);
 				timerrate = t0val;
 				if (musvol < 1)
 					musvol = 1;
@@ -262,10 +335,13 @@ namespace DiggerClassic.Core
 
 		internal void sett2val(int t2v)
 		{
+//  if (sndflag)
+//	timer2(t2v);
 		}
 
 		internal void setupsound()
 		{
+			// added by me..
 		}
 
 		internal void sound1up()
@@ -623,6 +699,7 @@ namespace DiggerClassic.Core
 			if (!soundflag && sndflag)
 			{
 				sndflag = false;
+//	timer2(40);
 				setsoundt2();
 			}
 			if (sndflag && !soundpausedflag)
@@ -654,16 +731,27 @@ namespace DiggerClassic.Core
 			}
 		}
 
-		internal void soundlevdone()
+		internal async Task soundlevdone()
 		{
 			try
 			{
-				// TODO Remove sleep?
-				Thread.Sleep(1000);
+				// TODO Thread.Sleep (1000);
+				await Task.Delay(1000, dig.Token);
 			}
 			catch (System.Exception e)
 			{
 			}
+/*  int timer=0;
+  soundstop();
+  nljpointer=0;
+  nljnoteduration=20;
+  soundlevdoneflag=soundpausedflag=true;
+  while (soundlevdoneflag) {
+	if (timerclock==timer)
+	  continue;
+	soundlevdoneupdate();
+	timer=timerclock;
+  } */
 		}
 
 		void soundlevdoneoff()
@@ -694,12 +782,14 @@ namespace DiggerClassic.Core
 			}
 			else
 			{
+//	olddelay(100);
 				soundlevdoneflag = false;
 			}
 		}
 
 		void soundoff()
 		{
+			// phony
 		}
 
 		internal void soundpause()
@@ -767,18 +857,23 @@ namespace DiggerClassic.Core
 		{
 			if (!int8flag)
 			{
+//	initint8();
 				timerrate = 0x4000;
+//	timer0(0x4000);
 				int8flag = true;
 			}
 		}
 
 		void stopint8()
 		{
+//  timer0(0);
 			if (int8flag)
 			{
+//	restoreint8();
 				int8flag = false;
 			}
 			sett2val(40);
+//  setspkrt2();
 		}
 	}
 }

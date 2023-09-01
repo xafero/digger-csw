@@ -1,12 +1,16 @@
-﻿using System.Threading;
+using System.Threading.Tasks;
 
-namespace DiggerClassic.Core
+namespace DiggerClassic
 {
-	internal sealed class Main
+	class Main
 	{
+
+		Digger dig;
+
+
 		int[] digsprorder = { 14, 13, 7, 6, 5, 4, 3, 2, 1, 12, 11, 10, 9, 8, 15, 0 }; // [16]
 
-		Game[] gamedat = { new(), new() };
+		Game[] gamedat = { new Game(), new Game() };
 
 		internal string pldispbuf = "";
 
@@ -23,10 +27,7 @@ namespace DiggerClassic.Core
 
 		int randv;
 
-		/// <summary>
-		/// [8][10][15]
-		/// </summary>
-		string[][] leveldat =
+		string[][] leveldat = // [8][10][15]
 		{
 			new[]
 			{
@@ -134,8 +135,6 @@ namespace DiggerClassic.Core
 			}
 		};
 
-		Digger dig;
-
 		internal Main(Digger d)
 		{
 			dig = d;
@@ -232,53 +231,278 @@ namespace DiggerClassic.Core
 		{
 			int l = levno();
 			if (l > 8)
-				/* Level plan: 12345678, 678, (5678) 247 times, 5 forever */
-				l = (l & 3) + 5;
+				l = (l & 3) + 5; /* Level plan: 12345678, 678, (5678) 247 times, 5 forever */
 			return l;
 		}
 
-		void switchnplayers()
+		internal async Task main()
 		{
-			nplayers = 3 - nplayers;
+
+			int frame, t, x = 0;
+			bool start;
+
+			randv = (int)dig.Pc.gethrt();
+			calibrate();
+//  parsecmd(argc,argv);
+			dig.ftime = speedmul * 2000l;
+			dig.Sprite.setretr(false);
+			dig.Pc.ginit();
+			dig.Sprite.setretr(true);
+			dig.Pc.gpal(0);
+			dig.Input.initkeyb();
+			dig.Input.detectjoy();
+			dig.Scores.loadscores();
+			dig.Sound.initsound();
+
+			dig.Scores.init();
+			dig.Scores._updatescores(dig.Scores.scores);
+
+			nplayers = 1;
+			do
+			{
+				dig.Sound.soundstop();
+				dig.Sprite.setsprorder(digsprorder);
+				dig.Drawing.creatembspr();
+				dig.Input.detectjoy();
+				dig.Pc.gclear();
+				dig.Pc.gtitle();
+				dig.Drawing.outtext("D I G G E R", 100, 0, 3);
+				shownplayers();
+				dig.Scores.showtable();
+				start = false;
+				frame = 0;
+
+				dig.time = dig.Pc.gethrt();
+
+				while (!start)
+				{
+					start = dig.Input.teststart();
+					if (dig.Input.akeypressed == 27)
+					{
+						//	esc
+						switchnplayers();
+						shownplayers();
+						dig.Input.akeypressed = 0;
+						dig.Input.keypressed = 0;
+					}
+					if (frame == 0)
+						for (t = 54; t < 174; t += 12)
+							dig.Drawing.outtext("            ", 164, t, 0);
+					if (frame == 50)
+					{
+						dig.Sprite.movedrawspr(8, 292, 63);
+						x = 292;
+					}
+					if (frame > 50 && frame <= 77)
+					{
+						x -= 4;
+						dig.Drawing.drawmon(0, true, 4, x, 63);
+					}
+					if (frame > 77)
+						dig.Drawing.drawmon(0, true, 0, 184, 63);
+					if (frame == 83)
+						dig.Drawing.outtext("NOBBIN", 216, 64, 2);
+					if (frame == 90)
+					{
+						dig.Sprite.movedrawspr(9, 292, 82);
+						dig.Drawing.drawmon(1, false, 4, 292, 82);
+						x = 292;
+					}
+					if (frame > 90 && frame <= 117)
+					{
+						x -= 4;
+						dig.Drawing.drawmon(1, false, 4, x, 82);
+					}
+					if (frame > 117)
+						dig.Drawing.drawmon(1, false, 0, 184, 82);
+					if (frame == 123)
+						dig.Drawing.outtext("HOBBIN", 216, 83, 2);
+					if (frame == 130)
+					{
+						dig.Sprite.movedrawspr(0, 292, 101);
+						dig.Drawing.drawdigger(4, 292, 101, true);
+						x = 292;
+					}
+					if (frame > 130 && frame <= 157)
+					{
+						x -= 4;
+						dig.Drawing.drawdigger(4, x, 101, true);
+					}
+					if (frame > 157)
+						dig.Drawing.drawdigger(0, 184, 101, true);
+					if (frame == 163)
+						dig.Drawing.outtext("DIGGER", 216, 102, 2);
+					if (frame == 178)
+					{
+						dig.Sprite.movedrawspr(1, 184, 120);
+						dig.Drawing.drawgold(1, 0, 184, 120);
+					}
+					if (frame == 183)
+						dig.Drawing.outtext("GOLD", 216, 121, 2);
+					if (frame == 198)
+						dig.Drawing.drawemerald(184, 141);
+					if (frame == 203)
+						dig.Drawing.outtext("EMERALD", 216, 140, 2);
+					if (frame == 218)
+						dig.Drawing.drawbonus(184, 158);
+					if (frame == 223)
+						dig.Drawing.outtext("BONUS", 216, 159, 2);
+					await dig.newframe();
+					frame++;
+					if (frame > 250)
+						frame = 0;
+				}
+				gamedat[0].level = 1;
+				gamedat[0].lives = 3;
+				if (nplayers == 2)
+				{
+					gamedat[1].level = 1;
+					gamedat[1].lives = 3;
+				}
+				else
+					gamedat[1].lives = 0;
+				dig.Pc.gclear();
+				curplayer = 0;
+				initlevel();
+				curplayer = 1;
+				initlevel();
+				dig.Scores.zeroscores();
+				dig.bonusvisible = true;
+				if (nplayers == 2)
+					flashplayer = true;
+				curplayer = 0;
+//	if (dig.Input.escape)
+//	  break;
+//    if (recording)
+//	  recputinit();
+				while ((gamedat[0].lives != 0 || gamedat[1].lives != 0) && !dig.Input.escape)
+				{
+					gamedat[curplayer].dead = false;
+					while (!gamedat[curplayer].dead && gamedat[curplayer].lives != 0 && !dig.Input.escape)
+					{
+						dig.Drawing.initmbspr();
+						await play();
+					}
+					if (gamedat[1 - curplayer].lives != 0)
+					{
+						curplayer = 1 - curplayer;
+						flashplayer = levnotdrawn = true;
+					}
+				}
+				dig.Input.escape = false;
+			} while (!false); //dig.Input.escape);
+/*  dig.Sound.soundoff();
+  restoreint8();
+  restorekeyb();
+  graphicsoff(); */
 		}
 
-		void testpause()
+		async Task play()
 		{
-			if (dig.Input.akeypressed == 32)
+			int t, c;
+/*  if (playing)
+	randv=recgetrand();
+  else
+	randv=getlrt();
+  if (recording)
+	recputrand(randv); */
+			if (levnotdrawn)
 			{
-				/* Space bar */
-				dig.Input.akeypressed = 0;
-				dig.Sound.soundpause();
-				dig.Sound.sett2val(40);
-				dig.Sound.setsoundt2();
-				cleartopline();
-				dig.Drawing.outtext("PRESS ANY KEY", 80, 0, 1);
-				dig.newframe();
-				dig.Input.keypressed = 0;
-				while (true)
+				levnotdrawn = false;
+				drawscreen();
+				dig.time = dig.Pc.gethrt();
+				if (flashplayer)
 				{
-					try
+					flashplayer = false;
+					pldispbuf = "PLAYER ";
+					if (curplayer == 0)
+						pldispbuf += "1";
+					else
+						pldispbuf += "2";
+					cleartopline();
+					for (t = 0; t < 15; t++)
+					for (c = 1; c <= 3; c++)
 					{
-						// TODO Remove sleep?
-						Thread.Sleep(50);
+						dig.Drawing.outtext(pldispbuf, 108, 0, c);
+						dig.Scores.writecurscore(c);
+						/* olddelay(20); */
+						await dig.newframe();
+						if (dig.Input.escape)
+							return;
 					}
-					catch (System.Exception e)
-					{
-					}
-					if (dig.Input.keypressed != 0)
-						break;
+					dig.Scores.drawscores();
+					dig.Scores.addscore(0);
 				}
-				cleartopline();
-				dig.Scores.drawscores();
-				dig.Scores.addscore(0);
-				dig.Drawing.drawlives();
-				dig.newframe();
-				dig.time = dig.Pc.gethrt() - dig.frametime;
-
-				dig.Input.keypressed = 0;
 			}
 			else
-				dig.Sound.soundpauseoff();
+				initchars();
+			dig.Input.keypressed = 0;
+			dig.Drawing.outtext("        ", 108, 0, 3);
+			dig.Scores.initscores();
+			dig.Drawing.drawlives();
+			dig.Sound.music(1);
+			dig.Input.readdir();
+			dig.time = dig.Pc.gethrt();
+			while (!gamedat[curplayer].dead && !gamedat[curplayer].levdone && !dig.Input.escape)
+			{
+				penalty = 0;
+				await dig.dodigger();
+				dig.Monster.domonsters();
+				dig.Bags.dobags();
+/*  if (penalty<8)
+	  for (t=(8-penalty)*5;t>0;t--)
+		olddelay(1); */
+				if (penalty > 8)
+					dig.Monster.incmont(penalty - 8);
+				await testpause();
+				checklevdone();
+			}
+			dig.erasedigger();
+			dig.Sound.musicoff();
+			t = 20;
+			while ((dig.Bags.getnmovingbags() != 0 || t != 0) && !dig.Input.escape)
+			{
+				if (t != 0)
+					t--;
+				penalty = 0;
+				dig.Bags.dobags();
+				await dig.dodigger();
+				dig.Monster.domonsters();
+				if (penalty < 8)
+/*    for (t=(8-penalty)*5;t>0;t--)
+		 olddelay(1); */
+					t = 0;
+			}
+			dig.Sound.soundstop();
+			dig.killfire();
+			dig.erasebonus();
+			dig.Bags.cleanupbags();
+			dig.Drawing.savefield();
+			dig.Monster.erasemonsters();
+			await dig.newframe(); // needed by Java version!!
+			if (gamedat[curplayer].levdone)
+				await dig.Sound.soundlevdone();
+			if (dig.countem() == 0)
+			{
+				gamedat[curplayer].level++;
+				if (gamedat[curplayer].level > 1000)
+					gamedat[curplayer].level = 1000;
+				initlevel();
+			}
+			if (gamedat[curplayer].dead)
+			{
+				gamedat[curplayer].lives--;
+				dig.Drawing.drawlives();
+				if (gamedat[curplayer].lives == 0 && !dig.Input.escape)
+					await dig.Scores.endofgame();
+			}
+			if (gamedat[curplayer].levdone)
+			{
+				gamedat[curplayer].level++;
+				if (gamedat[curplayer].level > 1000)
+					gamedat[curplayer].level = 1000;
+				initlevel();
+			}
 		}
 
 		internal int randno(int n)
@@ -306,315 +530,48 @@ namespace DiggerClassic.Core
 			}
 		}
 
-		public void main()
+		void switchnplayers()
 		{
-			bool start = false;
-			int frame = 0, x = 0, t = 0;
-
-			InitMain();
-			do
-			{
-				WriteTitle(ref start, ref frame);
-
-				while (!start)
-				{
-					PaintTitle(ref start, ref frame, ref x, ref t);
-				}
-
-				InitGame();
-
-				while ((gamedat[0].lives != 0 || gamedat[1].lives != 0) && !dig.Input.escape)
-				{
-					RunGame();
-				}
-
-				dig.Input.escape = false;
-			} while (!false);
+			nplayers = 3 - nplayers;
 		}
 
-		private void RunGame()
+		async Task testpause()
 		{
-			gamedat[curplayer].dead = false;
-			while (!gamedat[curplayer].dead && gamedat[curplayer].lives != 0 && !dig.Input.escape)
+			if (dig.Input.akeypressed == 32)
 			{
-				dig.Drawing.initmbspr();
-				play();
-			}
-			if (gamedat[1 - curplayer].lives != 0)
-			{
-				curplayer = 1 - curplayer;
-				flashplayer = levnotdrawn = true;
-			}
-		}
-
-		private void play()
-		{
-			int t = 0, c = 0;
-
-			if (levnotdrawn)
-				DoLevelScore(ref t, ref c);
-			else
-				initchars();
-
-			DrawScores();
-
-			while (!gamedat[curplayer].dead && !gamedat[curplayer].levdone && !dig.Input.escape)
-			{
-				PlayGame();
-			}
-
-			dig.erasedigger();
-			dig.Sound.musicoff();
-			t = 20;
-
-			while ((dig.Bags.getnmovingbags() != 0 || t != 0) && !dig.Input.escape)
-			{
-				PlayMovingBag(ref t);
-			}
-
-			DoEndOfGame();
-		}
-
-		private void DoEndOfGame()
-		{
-			dig.Sound.soundstop();
-			dig.killfire();
-			dig.erasebonus();
-			dig.Bags.cleanupbags();
-			dig.Drawing.savefield();
-			dig.Monster.erasemonsters();
-			dig.newframe();
-			if (gamedat[curplayer].levdone)
-				dig.Sound.soundlevdone();
-			if (dig.countem() == 0)
-			{
-				gamedat[curplayer].level++;
-				if (gamedat[curplayer].level > 1000)
-					gamedat[curplayer].level = 1000;
-				initlevel();
-			}
-			if (gamedat[curplayer].dead)
-			{
-				gamedat[curplayer].lives--;
-				dig.Drawing.drawlives();
-				if (gamedat[curplayer].lives == 0 && !dig.Input.escape)
-					dig.Scores.endofgame();
-			}
-			if (gamedat[curplayer].levdone)
-			{
-				gamedat[curplayer].level++;
-				if (gamedat[curplayer].level > 1000)
-					gamedat[curplayer].level = 1000;
-				initlevel();
-			}
-		}
-
-		private void PlayMovingBag(ref int t)
-		{
-			if (t != 0)
-				t--;
-			penalty = 0;
-			dig.Bags.dobags();
-			dig.dodigger();
-			dig.Monster.domonsters();
-			if (penalty < 8)
-				t = 0;
-		}
-
-		private void PlayGame()
-		{
-			penalty = 0;
-			dig.dodigger();
-			dig.Monster.domonsters();
-			dig.Bags.dobags();
-
-			if (penalty > 8)
-				dig.Monster.incmont(penalty - 8);
-			testpause();
-			checklevdone();
-		}
-
-		private void DrawScores()
-		{
-			dig.Input.keypressed = 0;
-			dig.Drawing.outtext("        ", 108, 0, 3);
-			dig.Scores.initscores();
-			dig.Drawing.drawlives();
-			dig.Sound.music(1);
-			dig.Input.readdir();
-			dig.time = dig.Pc.gethrt();
-		}
-
-		private void DoLevelScore(ref int t, ref int c)
-		{
-			levnotdrawn = false;
-			drawscreen();
-			dig.time = dig.Pc.gethrt();
-			if (flashplayer)
-			{
-				flashplayer = false;
-				pldispbuf = "PLAYER ";
-				if (curplayer == 0)
-					pldispbuf += "1";
-				else
-					pldispbuf += "2";
+				/* Space bar */
+				dig.Input.akeypressed = 0;
+				dig.Sound.soundpause();
+				dig.Sound.sett2val(40);
+				dig.Sound.setsoundt2();
 				cleartopline();
-				for (t = 0; t < 15; t++)
-				for (c = 1; c <= 3; c++)
+				dig.Drawing.outtext("PRESS ANY KEY", 80, 0, 1);
+				await dig.newframe();
+				dig.Input.keypressed = 0;
+				while (true)
 				{
-					dig.Drawing.outtext(pldispbuf, 108, 0, c);
-					dig.Scores.writecurscore(c);
-
-					dig.newframe();
-					if (dig.Input.escape)
-						return;
+					try
+					{
+						// TODO Thread.Sleep (50);
+						await Task.Delay(50, dig.Token);
+					}
+					catch (System.Exception e)
+					{
+					}
+					if (dig.Input.keypressed != 0)
+						break;
 				}
+				cleartopline();
 				dig.Scores.drawscores();
 				dig.Scores.addscore(0);
-			}
-		}
-
-		private void PaintTitle(ref bool start, ref int frame, ref int x, ref int t)
-		{
-			start = dig.Input.teststart();
-			if (dig.Input.akeypressed == 27)
-			{
-				//	esc
-				switchnplayers();
-				shownplayers();
-				dig.Input.akeypressed = 0;
+				dig.Drawing.drawlives();
+				await dig.newframe();
+				dig.time = dig.Pc.gethrt() - dig.frametime;
+//	olddelay(200);
 				dig.Input.keypressed = 0;
 			}
-			if (frame == 0)
-				for (t = 54; t < 174; t += 12)
-					dig.Drawing.outtext("            ", 164, t, 0);
-			if (frame == 50)
-			{
-				dig.Sprite.movedrawspr(8, 292, 63);
-				x = 292;
-			}
-			if (frame > 50 && frame <= 77)
-			{
-				x -= 4;
-				dig.Drawing.drawmon(0, true, 4, x, 63);
-			}
-			if (frame > 77)
-				dig.Drawing.drawmon(0, true, 0, 184, 63);
-			if (frame == 83)
-				dig.Drawing.outtext("NOBBIN", 216, 64, 2);
-			if (frame == 90)
-			{
-				dig.Sprite.movedrawspr(9, 292, 82);
-				dig.Drawing.drawmon(1, false, 4, 292, 82);
-				x = 292;
-			}
-			if (frame > 90 && frame <= 117)
-			{
-				x -= 4;
-				dig.Drawing.drawmon(1, false, 4, x, 82);
-			}
-			if (frame > 117)
-				dig.Drawing.drawmon(1, false, 0, 184, 82);
-			if (frame == 123)
-				dig.Drawing.outtext("HOBBIN", 216, 83, 2);
-			if (frame == 130)
-			{
-				dig.Sprite.movedrawspr(0, 292, 101);
-				dig.Drawing.drawdigger(4, 292, 101, true);
-				x = 292;
-			}
-			if (frame > 130 && frame <= 157)
-			{
-				x -= 4;
-				dig.Drawing.drawdigger(4, x, 101, true);
-			}
-			if (frame > 157)
-				dig.Drawing.drawdigger(0, 184, 101, true);
-			if (frame == 163)
-				dig.Drawing.outtext("DIGGER", 216, 102, 2);
-			if (frame == 178)
-			{
-				dig.Sprite.movedrawspr(1, 184, 120);
-				dig.Drawing.drawgold(1, 0, 184, 120);
-			}
-			if (frame == 183)
-				dig.Drawing.outtext("GOLD", 216, 121, 2);
-			if (frame == 198)
-				dig.Drawing.drawemerald(184, 141);
-			if (frame == 203)
-				dig.Drawing.outtext("EMERALD", 216, 140, 2);
-			if (frame == 218)
-				dig.Drawing.drawbonus(184, 158);
-			if (frame == 223)
-				dig.Drawing.outtext("BONUS", 216, 159, 2);
-			dig.newframe();
-			frame++;
-			if (frame > 250)
-				frame = 0;
-		}
-
-		private void InitGame()
-		{
-			gamedat[0].level = 1;
-			gamedat[0].lives = 3;
-			if (nplayers == 2)
-			{
-				gamedat[1].level = 1;
-				gamedat[1].lives = 3;
-			}
 			else
-				gamedat[1].lives = 0;
-			dig.Pc.gclear();
-			curplayer = 0;
-			initlevel();
-			curplayer = 1;
-			initlevel();
-			dig.Scores.zeroscores();
-			dig.bonusvisible = true;
-			if (nplayers == 2)
-				flashplayer = true;
-			curplayer = 0;
-		}
-
-		private void WriteTitle(ref bool start, ref int frame)
-		{
-			dig.Sound.soundstop();
-			dig.Sprite.setsprorder(digsprorder);
-			dig.Drawing.creatembspr();
-			dig.Input.detectjoy();
-			dig.Pc.gclear();
-			dig.Pc.gtitle();
-			dig.Drawing.outtext("D I G G E R", 100, 0, 3);
-			shownplayers();
-			dig.Scores.showtable();
-			start = false;
-			frame = 0;
-
-			dig.time = dig.Pc.gethrt();
-		}
-
-		public void InitMain()
-		{
-			int frame, t, x = 0;
-			bool start;
-
-			randv = (int)dig.Pc.gethrt();
-			calibrate();
-
-			dig.ftime = speedmul * 2000l;
-			dig.Sprite.setretr(false);
-			dig.Pc.ginit();
-			dig.Sprite.setretr(true);
-			dig.Pc.gpal(0);
-			dig.Input.initkeyb();
-			dig.Input.detectjoy();
-			dig.Scores.loadscores();
-			dig.Sound.initsound();
-
-			dig.Scores.init();
-			dig.Scores._updatescores(dig.Scores.scores);
-
-			nplayers = 1;
+				dig.Sound.soundpauseoff();
 		}
 	}
 }

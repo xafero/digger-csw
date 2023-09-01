@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using DiggerAPI;
-using DiggerClassic.Graphics;
 
-namespace DiggerClassic.Core
+namespace DiggerClassic
 {
 	internal sealed class Pc : IPc
 	{
+
+		Digger dig;
+
 		internal IRefresher[] source = new IRefresher[2];
 		internal IRefresher currentSource;
 
@@ -23,6 +25,7 @@ namespace DiggerClassic.Core
 				new byte[] { 0, 0xAA, 0x00, 0x54 },
 				new byte[] { 0, 0x00, 0x00, 0x00 }
 			},
+
 			new[]
 			{
 				new byte[] { 0, 0x54, 0xFF, 0xFF },
@@ -31,8 +34,6 @@ namespace DiggerClassic.Core
 			}
 		};
 
-		Digger dig;
-
 		internal Pc(Digger d)
 		{
 			dig = d;
@@ -40,7 +41,7 @@ namespace DiggerClassic.Core
 
 		internal void gclear()
 		{
-			for (var i = 0; i < size; i++)
+			for (int i = 0; i < size; i++)
 				pixels[i] = 0;
 			currentSource.NewPixels();
 		}
@@ -52,17 +53,19 @@ namespace DiggerClassic.Core
 
 		internal int getkips()
 		{
-			return 0;
+			return 0; // phony
 		}
 
 		internal void ggeti(int x, int y, short[] p, int w, int h)
 		{
-			var src = 0;
-			var dest = y * width + (x & 0xfffc);
-			for (var i = 0; i < h; i++)
+
+			int src = 0;
+			int dest = y * width + (x & 0xfffc);
+
+			for (int i = 0; i < h; i++)
 			{
-				var d = dest;
-				for (var j = 0; j < w; j++)
+				int d = dest;
+				for (int j = 0; j < w; j++)
 				{
 					p[src++] = (short)((((((pixels[d] << 2) | pixels[d + 1]) << 2) | pixels[d + 2]) << 2) |
 					                   pixels[d + 3]);
@@ -72,11 +75,12 @@ namespace DiggerClassic.Core
 				}
 				dest += width;
 			}
+
 		}
 
 		internal int ggetpix(int x, int y)
 		{
-			var ofs = width * y + x & 0xfffc;
+			int ofs = width * y + x & 0xfffc;
 			return (((((pixels[ofs] << 2) | pixels[ofs + 1]) << 2) | pixels[ofs + 2]) << 2) | pixels[ofs + 3];
 		}
 
@@ -101,14 +105,16 @@ namespace DiggerClassic.Core
 
 		internal void gputi(int x, int y, short[] p, int w, int h, bool b)
 		{
-			var src = 0;
-			var dest = y * width + (x & 0xfffc);
-			for (var i = 0; i < h; i++)
+
+			int src = 0;
+			int dest = y * width + (x & 0xfffc);
+
+			for (int i = 0; i < h; i++)
 			{
-				var d = dest;
-				for (var j = 0; j < w; j++)
+				int d = dest;
+				for (int j = 0; j < w; j++)
 				{
-					var px = p[src++];
+					short px = p[src++];
 					pixels[d + 3] = px & 3;
 					px >>= 2;
 					pixels[d + 2] = px & 3;
@@ -122,21 +128,25 @@ namespace DiggerClassic.Core
 				}
 				dest += width;
 			}
+
 		}
 
 		internal void gputim(int x, int y, int ch, int w, int h)
 		{
-			var spr = CgaGrafx.cgatable[ch * 2];
-			var msk = CgaGrafx.cgatable[ch * 2 + 1];
-			var src = 0;
-			var dest = y * width + (x & 0xfffc);
-			for (var i = 0; i < h; i++)
+
+			short[] spr = cgagrafx.cgatable[ch * 2];
+			short[] msk = cgagrafx.cgatable[ch * 2 + 1];
+
+			int src = 0;
+			int dest = y * width + (x & 0xfffc);
+
+			for (int i = 0; i < h; i++)
 			{
-				var d = dest;
-				for (var j = 0; j < w; j++)
+				int d = dest;
+				for (int j = 0; j < w; j++)
 				{
-					var px = spr[src];
-					var mx = msk[src];
+					short px = spr[src];
+					short mx = msk[src];
 					src++;
 					if ((mx & 3) == 0)
 						pixels[d + 3] = px & 3;
@@ -157,29 +167,36 @@ namespace DiggerClassic.Core
 				}
 				dest += width;
 			}
+
 		}
 
 		internal void gtitle()
 		{
+
 			int src = 0, dest = 0, plus = 0;
+
 			while (true)
 			{
-				if (src >= CgaGrafx.cgatitledat.Length)
+
+				if (src >= cgagrafx.cgatitledat.Length)
 					break;
-				int b = CgaGrafx.cgatitledat[src++], l, c;
+
+				int b = cgagrafx.cgatitledat[src++], l, c;
+
 				if (b == 0xfe)
 				{
-					l = CgaGrafx.cgatitledat[src++];
+					l = cgagrafx.cgatitledat[src++];
 					if (l == 0)
 						l = 256;
-					c = CgaGrafx.cgatitledat[src++];
+					c = cgagrafx.cgatitledat[src++];
 				}
 				else
 				{
 					l = 1;
 					c = b;
 				}
-				for (var i = 0; i < l; i++)
+
+				for (int i = 0; i < l; i++)
 				{
 					int px = c, adst = 0;
 					if (dest < 32768)
@@ -197,9 +214,12 @@ namespace DiggerClassic.Core
 					if (dest >= 65535)
 						break;
 				}
+
 				if (dest >= 65535)
 					break;
+
 			}
+
 		}
 
 		internal void gwrite(int x, int y, int ch, int c)
@@ -209,17 +229,22 @@ namespace DiggerClassic.Core
 
 		internal void gwrite(int x, int y, int ch, int c, bool upd)
 		{
+
 			int dest = x + y * width, ofs = 0, color = c & 3;
+
 			ch -= 32;
 			if ((ch < 0) || (ch > 0x5f))
 				return;
-			var chartab = Alpha.ascii2cga[ch];
+
+			short[] chartab = alpha.ascii2cga[ch];
+
 			if (chartab == null)
 				return;
-			for (var i = 0; i < 12; i++)
+
+			for (int i = 0; i < 12; i++)
 			{
-				var d = dest;
-				for (var j = 0; j < 3; j++)
+				int d = dest;
+				for (int j = 0; j < 3; j++)
 				{
 					int px = chartab[ofs++];
 					pixels[d + 3] = px & color;
@@ -233,16 +258,16 @@ namespace DiggerClassic.Core
 				}
 				dest += width;
 			}
+
 			if (upd)
-			{
-				// Force complete update for high score
-				currentSource.NewPixels( /* x, y, 12, 12 */);
-			}
+				currentSource.NewPixels( /* x, y, 12, 12 */); // Force complete update for high score
+
 		}
 
 		public int GetWidth() => width;
 		public int GetHeight() => height;
 		public int[] GetPixels() => pixels;
 		public IRefresher GetCurrentSource() => currentSource;
+
 	}
 }

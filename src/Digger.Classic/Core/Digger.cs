@@ -1,10 +1,13 @@
-﻿using System.Threading;
+using System.Threading.Tasks;
 using DiggerAPI;
-using DiggerClassic.Graphics;
-using DiggerClassic.Score;
 
-namespace DiggerClassic.Core
+namespace DiggerClassic
 {
+/* WARNING! This code is ugly and highly non-object-oriented.
+It was ported from C almost mechanically! */
+
+	using System.Threading;
+
 	public class Digger : IDigger
 	{
 		internal static int MAX_RATE = 200;
@@ -13,7 +16,6 @@ namespace DiggerClassic.Core
 		public int width = 320;
 		public int height = 200;
 		public int frametime = 66;
-
 		Thread gamethread;
 
 		internal string subaddr;
@@ -23,12 +25,14 @@ namespace DiggerClassic.Core
 		internal Bags Bags;
 		internal Main Main;
 		internal Sound Sound;
-		internal Monsters Monster;
+		internal Monster Monster;
 		internal Scores Scores;
 		internal Sprite Sprite;
 		internal Drawing Drawing;
 		internal Input Input;
 		internal Pc Pc;
+
+// -----
 
 		internal int diggerx = 0;
 		internal int diggery = 0;
@@ -52,13 +56,12 @@ namespace DiggerClassic.Core
 		internal int bonustimeleft = 0;
 		internal int eatmsc = 0;
 		internal int emocttime = 0;
+
 		int emmask = 0;
 
-		/// <summary>
-		/// 150
-		/// </summary>
 		byte[] emfield =
 		{
+			//[150]
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -76,18 +79,12 @@ namespace DiggerClassic.Core
 		internal bool bonusvisible = false;
 		internal bool bonusmode = false;
 		internal bool diggervisible = false;
+
 		internal long time;
 		internal long ftime = 50;
 
-		/// <summary>
-		/// 8
-		/// </summary>
-		int[] embox = { 8, 12, 12, 9, 16, 12, 6, 9 };
-
-		/// <summary>
-		/// 7
-		/// </summary>
-		int[] deatharc = { 3, 5, 6, 6, 5, 3, 0 };
+		int[] embox = { 8, 12, 12, 9, 16, 12, 6, 9 }; // [8]
+		int[] deatharc = { 3, 5, 6, 6, 5, 3, 0 }; // [7]
 
 		public Digger(IFactory factory)
 		{
@@ -95,7 +92,7 @@ namespace DiggerClassic.Core
 			Bags = new Bags(this);
 			Main = new Main(this);
 			Sound = new Sound(this);
-			Monster = new Monsters(this);
+			Monster = new Monster(this);
 			Scores = new Scores(this);
 			Sprite = new Sprite(this);
 			Drawing = new Drawing(this);
@@ -211,9 +208,9 @@ namespace DiggerClassic.Core
 			}
 		}
 
-		internal void dodigger()
+		internal async Task dodigger()
 		{
-			newframe();
+			await newframe();
 			if (expsn != 0)
 				drawexplosion();
 			else
@@ -369,6 +366,7 @@ namespace DiggerClassic.Core
 
 		public void Init()
 		{
+
 			if (gamethread != null)
 				gamethread.Abort();
 
@@ -390,17 +388,19 @@ namespace DiggerClassic.Core
 
 			for (int i = 0; i < 2; i++)
 			{
-				// 8, 4
-				var model = new ColorModel(Pc.pal[i][0], Pc.pal[i][1], Pc.pal[i][2]);
+				var model = new ColorModel(8, 4, Pc.pal[i][0], Pc.pal[i][1], Pc.pal[i][2]);
 				Pc.source[i] = _factory.CreateRefresher(this, model);
 				Pc.source[i].NewPixels();
 			}
 
 			Pc.currentSource = Pc.source[0];
 
-			gamethread = new Thread(this.run);
-			gamethread.Start();
+			// TODO gamethread = new Thread (this.run); gamethread.Start ();
+			CaTok = new CancellationTokenSource();
 		}
+
+		public CancellationTokenSource CaTok;
+		public CancellationToken Token => CaTok.Token;
 
 		void initbonusmode()
 		{
@@ -554,7 +554,7 @@ namespace DiggerClassic.Core
 					emfield[y * 15 + x] = (byte)(emfield[y * 15 + x] & ~emmask);
 		}
 
-		internal void newframe()
+		internal async Task newframe()
 		{
 			Input.checkkeyb();
 			time += frametime;
@@ -563,7 +563,8 @@ namespace DiggerClassic.Core
 			{
 				try
 				{
-					Thread.Sleep((int)l);
+					// TODO Thread.Sleep ((int)l);
+					await Task.Delay((int)l, Token);
 				}
 				catch (System.Exception e)
 				{
@@ -584,9 +585,9 @@ namespace DiggerClassic.Core
 			return dir;
 		}
 
-		public void run()
+		public async Task runAsync()
 		{
-			Main.main();
+			await Main.main();
 		}
 
 		public void Start()
