@@ -1,7 +1,8 @@
 using System;
 using DiggerAPI;
+using DiggerClassic.Graphics;
 
-namespace DiggerClassic
+namespace DiggerClassic.Core
 {
 	internal sealed class Pc : IPc
 	{

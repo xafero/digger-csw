@@ -1,14 +1,14 @@
+using System.Threading;
 using System.Threading.Tasks;
 using DiggerAPI;
+using DiggerClassic.Graphics;
+using DiggerClassic.Score;
 
-namespace DiggerClassic
+namespace DiggerClassic.Core
 {
 /* WARNING! This code is ugly and highly non-object-oriented.
 It was ported from C almost mechanically! */
-
-	using System.Threading;
-
-	public class Digger : IDigger
+public class Digger : IDigger
 	{
 		internal static int MAX_RATE = 200;
 		internal static int MIN_RATE = 40;
@@ -585,7 +585,7 @@ It was ported from C almost mechanically! */
 			return dir;
 		}
 
-		public async Task runAsync()
+		public async Task RunAsync()
 		{
 			await Main.main();
 		}

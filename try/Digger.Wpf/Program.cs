@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
-using DiggerClassic;
+using DiggerClassic.Util;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
@@ -14,7 +14,7 @@ namespace Digger.Wpf
 		private static void Main()
 		{
 			var frm = new WpfDigger(null);
-			var game = new DiggerClassic.Digger(frm);
+			var game = new DiggerClassic.Core.Digger(frm);
 			frm.SetFocusable(true);
 			game.Init();
 			game.Start();

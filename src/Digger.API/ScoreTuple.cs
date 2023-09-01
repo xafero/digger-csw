@@ -1,6 +1,6 @@
 using System;
 
-namespace DiggerClassic
+namespace DiggerAPI
 {
     public class ScoreTuple : Tuple<string, int>
     {

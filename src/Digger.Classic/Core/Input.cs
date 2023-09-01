@@ -1,4 +1,4 @@
-namespace DiggerClassic
+namespace DiggerClassic.Core
 {
 	class Input
 	{

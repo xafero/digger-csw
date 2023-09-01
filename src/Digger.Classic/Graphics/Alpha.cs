@@ -1,4 +1,4 @@
-namespace DiggerClassic
+namespace DiggerClassic.Graphics
 {
 	internal static class Alpha
 	{

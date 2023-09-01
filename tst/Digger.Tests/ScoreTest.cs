@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using DiggerClassic;
+using DiggerAPI;
 using FluentAssertions;
 using Xunit;
 

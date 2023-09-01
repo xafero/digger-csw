@@ -3,11 +3,21 @@
 @using Excubo.Blazor.Canvas
 @using Excubo.Blazor.Canvas.Contexts
 @using System.Timers
+@using DiggerDemo.Core
+@using SkiaSharp.Views.Blazor
+@using Dig = DiggerClassic.Core.Digger;
 @inject IJSRuntime js
+
+<SKCanvasView Width="512px" Height="512px" @ref="_form" />
 
 <Canvas width="400" height="400" @ref="_canvas" style="background: #333"></Canvas>
 
 @code {
+	private WebDigger _web;
+	private SKCanvasView _form;
+	private Dig _game;
+	private Timer _timer2;
+
 	private Canvas _canvas;
 	private Context2D _context;
 	private Timer _timer;
@@ -16,6 +26,24 @@
 	{
 		if (firstRender)
 		{
+			_web = new WebDigger(null) { _canvas = _form };
+			_form.EnableRenderLoop = false;
+			_form.OnPaintSurface = _web.PaintSurface;
+
+			_game = new Dig(_web);
+			_web._digger = _game;
+			_web.SetFocusable();
+			_game.Init();
+			_game.Start();
+
+			_timer2 = new Timer(10);
+			_timer2.Elapsed += async (o, s) =>
+			{
+				_timer2.Enabled = false;
+				await _web._digger.RunAsync();
+			};
+			_timer2.Enabled = true;
+			
 			_context = await _canvas.GetContext2DAsync();
 			await _context.TranslateAsync(200, 200);
 

@@ -1,6 +1,4 @@
-﻿using DiggerClassic;
-
-namespace DiggerAPI
+﻿namespace DiggerAPI
 {
 	public interface IScores
 	{

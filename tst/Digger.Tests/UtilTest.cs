@@ -1,4 +1,4 @@
-using DiggerClassic;
+using DiggerClassic.Util;
 using Xunit;
 
 namespace Digger.Tests

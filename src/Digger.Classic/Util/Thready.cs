@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace DiggerClassic
+namespace DiggerClassic.Util
 {
 	internal static class Thready
 	{

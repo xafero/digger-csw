@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using DiggerClassic;
+using DiggerClassic.Util;
 
 namespace Digger.WinForms
 {
@@ -16,7 +16,7 @@ namespace Digger.WinForms
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			var frm = new FormsDigger(null);
-			var game = new DiggerClassic.Digger(frm);
+			var game = new DiggerClassic.Core.Digger(frm);
 			frm.SetFocusable(true);
 			game.Init();
 			game.Start();

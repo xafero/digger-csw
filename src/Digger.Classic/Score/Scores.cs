@@ -2,8 +2,9 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using DiggerAPI;
+using DiggerClassic.Core;
 
-namespace DiggerClassic
+namespace DiggerClassic.Score
 {
 	public sealed class Scores : IScores
 	{

@@ -1,4 +1,6 @@
-namespace DiggerClassic
+using DiggerClassic.Core;
+
+namespace DiggerClassic.Graphics
 {
 	internal sealed class Drawing
 	{

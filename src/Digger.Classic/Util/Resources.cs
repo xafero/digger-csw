@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace DiggerClassic
+namespace DiggerClassic.Util
 {
     public static class Resources
     {

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace DiggerClassic
+namespace DiggerClassic.Core
 {
 	class Main
 	{

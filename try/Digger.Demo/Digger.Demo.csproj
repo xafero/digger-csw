@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>DiggerDemo</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,6 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.21" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.21" PrivateAssets="all" />
     <PackageReference Include="PublishSPAforGitHubPages.Build" Version="2.1.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.5" />
+    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="2.88.5" />
+    <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.5" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 using System;
 
-namespace DiggerClassic
+namespace DiggerClassic.Core
 {
 	internal sealed class Monsters
 	{

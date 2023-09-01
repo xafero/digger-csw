@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace DiggerClassic
+namespace DiggerClassic.Core
 {
 // sound has not been ported yet
 

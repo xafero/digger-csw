@@ -1,6 +1,6 @@
 using DiggerAPI;
 
-namespace DiggerClassic
+namespace DiggerClassic.Graphics
 {
 	public class ColorModel : IColorModel
 	{
