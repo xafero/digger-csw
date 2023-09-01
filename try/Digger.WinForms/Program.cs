@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using DiggerClassic;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Digger.WinForms
 {

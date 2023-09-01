@@ -25,7 +25,7 @@ It was ported from C almost mechanically! */
 		internal Bags Bags;
 		internal Main Main;
 		internal Sound Sound;
-		internal Monster Monster;
+		internal Monsters Monster;
 		internal Scores Scores;
 		internal Sprite Sprite;
 		internal Drawing Drawing;
@@ -92,7 +92,7 @@ It was ported from C almost mechanically! */
 			Bags = new Bags(this);
 			Main = new Main(this);
 			Sound = new Sound(this);
-			Monster = new Monster(this);
+			Monster = new Monsters(this);
 			Scores = new Scores(this);
 			Sprite = new Sprite(this);
 			Drawing = new Drawing(this);

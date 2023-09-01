@@ -236,7 +236,7 @@ namespace DiggerClassic
 			if ((ch < 0) || (ch > 0x5f))
 				return;
 
-			short[] chartab = alpha.ascii2cga[ch];
+			short[] chartab = Alpha.ascii2cga[ch];
 
 			if (chartab == null)
 				return;
