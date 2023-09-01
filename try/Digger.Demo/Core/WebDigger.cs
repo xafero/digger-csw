@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using DiggerAPI;
-using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 
 namespace DiggerDemo.Core
@@ -8,7 +8,9 @@ namespace DiggerDemo.Core
 	internal sealed class WebDigger : AppletCompat, IFactory
 	{
 		public IDigger _digger;
-		public SKCanvasView _canvas;
+		public SKGLView _canvas;
+
+		private readonly ColorCache _cache;
 
 		public WebDigger() : this(null)
 		{
@@ -17,10 +19,14 @@ namespace DiggerDemo.Core
 		public WebDigger(IDigger digger)
 		{
 			_digger = digger;
+			_cache = new ColorCache();
 		}
-
-		internal void PaintSurface(SKPaintSurfaceEventArgs e)
+		
+		public void PaintSurface(SKPaintGLSurfaceEventArgs e)
 		{
+			var a = 0L;
+			Debug.WriteLine("a: " + (a=DateTime.Now.Ticks));
+
 			if (_digger == null)
 				return;
 
@@ -41,18 +47,26 @@ namespace DiggerDemo.Core
 			var model = pc.GetCurrentSource().Model;
 
 			int shiftX = 0, shiftY = 0;
-			var paint = new SKPaint { Style = SKPaintStyle.Fill };
 
+			var b = 0L;
+			Debug.WriteLine("b: " + (b = DateTime.Now.Ticks));
+
+			//var tmp = new int[];
 			for (var x = 0; x < w; x++)
 			{
+				var xPos = shiftX + (x * minF);
 				for (var y = 0; y < h; y++)
 				{
 					var arrayIndex = y * w + x;
-					var (sr, sg, sb) = model.GetColor(data[arrayIndex]);
-					paint.Color = new SKColor((byte)sr, (byte)sg, (byte)sb);
-					g.DrawRect(shiftX + (x * minF), shiftY + (y * minF), minF, minF, paint);
+					var paint = _cache.GetPaint(data[arrayIndex], model);
+					g.DrawRect(xPos, shiftY + (y * minF), minF, minF, paint);
 				}
 			}
+
+			var c = 0L;
+			Debug.WriteLine("c: " + (c = DateTime.Now.Ticks));
+
+			Debug.WriteLine("   --> " + (c - b) + " | " + (b - a));
 		}
 
 		public override bool KeyUp(int key) => _digger.KeyUp(key);

@@ -5,11 +5,11 @@
 @using SkiaSharp.Views.Blazor
 @using Dig = DiggerClassic.Core.Digger;
 
-<SKCanvasView Width="1024px" Height="1024px" @ref="_form" />
+<SKGLView Width="1024px" Height="1024px" @ref="_form" />
 
 @code {
 	private WebDigger _web;
-	private SKCanvasView _form;
+	private SKGLView _form;
 	private Dig _game;
 	private Timer _timer;
 
@@ -18,6 +18,7 @@
 		if (firstRender)
 		{
 			_web = new WebDigger(null) { _canvas = _form };
+			_form.IgnorePixelScaling = true;
 			_form.EnableRenderLoop = false;
 			_form.OnPaintSurface = _web.PaintSurface;
 
