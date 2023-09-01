@@ -20,7 +20,7 @@ jobs:
         dotnet-version: 7.0.x
 
     - name: Restore workloads
-      run: dotnet workload install wasm-tools-net7
+      run: dotnet workload install wasm-tools
 
     - name: Restore dependencies
       run: dotnet restore
