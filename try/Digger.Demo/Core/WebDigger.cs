@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using DiggerAPI;
+using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 
 namespace DiggerDemo.Core
@@ -24,9 +25,6 @@ namespace DiggerDemo.Core
 		
 		public void PaintSurface(SKPaintGLSurfaceEventArgs e)
 		{
-			var a = 0L;
-			Debug.WriteLine("a: " + (a=DateTime.Now.Ticks));
-
 			if (_digger == null)
 				return;
 
@@ -48,10 +46,6 @@ namespace DiggerDemo.Core
 
 			int shiftX = 0, shiftY = 0;
 
-			var b = 0L;
-			Debug.WriteLine("b: " + (b = DateTime.Now.Ticks));
-
-			//var tmp = new int[];
 			for (var x = 0; x < w; x++)
 			{
 				var xPos = shiftX + (x * minF);
@@ -62,11 +56,6 @@ namespace DiggerDemo.Core
 					g.DrawRect(xPos, shiftY + (y * minF), minF, minF, paint);
 				}
 			}
-
-			var c = 0L;
-			Debug.WriteLine("c: " + (c = DateTime.Now.Ticks));
-
-			Debug.WriteLine("   --> " + (c - b) + " | " + (b - a));
 		}
 
 		public override bool KeyUp(int key) => _digger.KeyUp(key);
