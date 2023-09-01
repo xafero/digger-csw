@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using DiggerAPI;
-using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 
 namespace DiggerDemo.Core
