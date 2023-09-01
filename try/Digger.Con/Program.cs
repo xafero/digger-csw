@@ -16,7 +16,7 @@ namespace Digger.Con
 			game.Init();
 			game.Start();
 
-			var timer = new Thread(async _ => { await game.runAsync(); });
+			var timer = new Thread(async _ => { await game.RunAsync(); });
 			timer.Start();
 
 			var frame = new ConForm { Text = "Digger Remastered" };

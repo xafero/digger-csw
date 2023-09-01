@@ -22,7 +22,7 @@ namespace DiggerClassic.Score
 		int bonusscore = 20000;
 		bool gotinitflag = false;
 
-		internal Scores(Digger d)
+		public Scores(Digger d)
 		{
 			dig = d;
 		}
@@ -402,10 +402,6 @@ namespace DiggerClassic.Score
 
 		public string[] ScoreInit => scoreinit;
 		public long[] ScoreHigh => scorehigh;
-		public ScoreTuple[] ScoreTuples
-		{
-			get => throw new NotImplementedException();
-			set => throw new NotImplementedException();
-		}
+		public ScoreTuple[] ScoreTuples { set => _updatescores(value); }
 	}
 }

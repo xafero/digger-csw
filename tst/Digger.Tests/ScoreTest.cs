@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using DiggerAPI;
+using DiggerClassic.Score;
 using FluentAssertions;
 using Xunit;
 
@@ -31,15 +32,13 @@ namespace Digger.Tests
 
 		private static ScoreTuple[] ShouldRead(TextReader reader)
 		{
-			// return ScoreStorage.TryReadFromStorage(reader, out var tuples) ? tuples : null;
-			throw new InvalidOperationException();
+			return ScoreStorage.ReadFromStorage(reader);
 		}
 
 		private static void ShouldWrite(TextWriter writer, ScoreTuple[] tuples)
 		{
-			// var scores = new Scores(null) { ScoreTuples = tuples };
-			// writer.WriteToStorage(scores);
-			throw new InvalidOperationException();
+			var scores = new Scores(null) { ScoreTuples = tuples };
+			ScoreStorage.WriteToStorage(writer, scores);
 		}
 	}
 }

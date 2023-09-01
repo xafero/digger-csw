@@ -8,7 +8,7 @@ namespace DiggerClassic.Util
         {
             var type = typeof(Resources);
             var dll = type.Assembly;
-            var prefix = type.FullName;
+            var prefix = $"{nameof(DiggerClassic)}.{type.Name}";
             var fullName = prefix + path.Replace('/', '.');
             var resource = dll.GetManifestResourceStream(fullName);
             return resource;
