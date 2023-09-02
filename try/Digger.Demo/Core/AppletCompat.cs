@@ -15,9 +15,6 @@
 
 		public void RequestFocus() => Focus();
 
-		public abstract bool KeyUp(int key);
-		public abstract bool KeyDown(int key);
-
 		public const int Key_Left = 1006;
 		public const int Key_Right = 1007;
 		public const int Key_Up = 1004;
