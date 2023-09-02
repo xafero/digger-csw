@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using DiggerAPI;
+﻿using DiggerAPI;
 
 namespace Digger.Con
 {
-	internal class ConRefresher : IRefresher
+	internal sealed class ConRefresher : IRefresher
 	{
 		public void NewPixels()
 		{
@@ -12,10 +11,10 @@ namespace Digger.Con
 
 		public void NewPixels(int x, int y, int width, int height)
 		{
-			// TODO Refresh frame?!
-			Debug.WriteLine($"{nameof(NewPixels)}: {x} {y} {width} {height}");
+			// NO-OP!
 		}
 
-		public IColorModel Model { get; }
+		public IColorModel Model { get; set; }
+		public IDigger Parent { get; set; }
 	}
 }

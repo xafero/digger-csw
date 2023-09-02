@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Digger.Con
 {
-	internal class ConForm
+	internal sealed class ConForm
 	{
 		public string Text { get; set; }
 		public Size Size { get; set; }
@@ -17,5 +17,10 @@ namespace Digger.Con
 		}
 
 		public ConDigger Form { get; set; }
+
+		public void Close()
+		{
+			FormClosed?.Invoke();
+		}
 	}
 }
