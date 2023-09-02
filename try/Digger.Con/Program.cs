@@ -47,7 +47,7 @@ namespace Digger.Con
 			var timer = new Timer(_ =>
 			{
 				watch.Restart();
-				frm.OnPaintSurface(canvas, info);
+				frm.OnPaintSurface3(canvas, info);
 				var dur = watch.ElapsedMilliseconds;
 
 				imageIdx++;
