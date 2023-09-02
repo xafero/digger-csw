@@ -8,9 +8,12 @@ namespace Digger.Con
 	{
 		public IDigger _digger;
 
+		private readonly ColorCache _cache;
+
 		public ConDigger(IDigger parent)
 		{
 			_digger = parent;
+			_cache = new ColorCache();
 		}
 
 		public void SetFocusable(bool _)

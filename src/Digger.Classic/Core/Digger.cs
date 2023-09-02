@@ -388,7 +388,7 @@ public class Digger : IDigger
 
 			for (int i = 0; i < 2; i++)
 			{
-				var model = new ColorModel(8, 4, Pc.pal[i][0], Pc.pal[i][1], Pc.pal[i][2]);
+				var model = new ColorModel(i + 1, 8, 4, Pc.pal[i][0], Pc.pal[i][1], Pc.pal[i][2]);
 				Pc.source[i] = _factory.CreateRefresher(this, model);
 				Pc.source[i].NewPixels();
 			}

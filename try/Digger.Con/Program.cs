@@ -42,7 +42,7 @@ namespace Digger.Con
 			var watch = new Stopwatch();
 			var minMs = long.MaxValue;
 			var maxMs = long.MinValue;
-			double avgMs = 0L;
+			double avgMs;
 			var sumMs = 0L;
 			var timer = new Timer(_ =>
 			{
