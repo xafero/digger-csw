@@ -58,20 +58,22 @@ namespace DiggerSkia.Render
 				var ptr = (uint*)pixels.ToPointer();
 
 				for (var x = 0; x < w; x++)
-				for (var y = 0; y < h; y++)
 				{
-					var arrayIndex = y * w + x;
-					var paint = _cache.GetPaint(data[arrayIndex], model);
 					var xP = shiftX + x * minF;
-					var yP = shiftY + y * minF;
-					var offset = (int)yP * width + (int)xP;
-
-					for (var dx = 0; dx < minFi; dx++)
-					for (var dy = 0; dy < minFi; dy++)
+					for (var y = 0; y < h; y++)
 					{
-						var dest = offset + dy * width + dx;
-						var copy = ptr + dest;
-						*copy = paint;
+						var arrayIndex = y * w + x;
+						var paint = _cache.GetPaint(data[arrayIndex], model);
+						var yP = shiftY + y * minF;
+						var offset = (int)yP * width + (int)xP;
+
+						for (var dx = 0; dx < minFi; dx++)
+						for (var dy = 0; dy < minFi; dy++)
+						{
+							var dest = offset + dy * width + dx;
+							var copy = ptr + dest;
+							*copy = paint;
+						}
 					}
 				}
 			}

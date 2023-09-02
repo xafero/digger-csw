@@ -43,13 +43,15 @@ namespace DiggerSkia.Render
 			var shiftY = (float)(rh - h * minF) / 2;
 
 			for (var x = 0; x < w; x++)
-			for (var y = 0; y < h; y++)
 			{
-				var arrayIndex = y * w + x;
-				var paint = _cache.GetPaint(data[arrayIndex], model);
 				var xP = shiftX + x * minF;
-				var yP = shiftY + y * minF;
-				g.DrawRect(xP, yP, minF, minF, paint);
+				for (var y = 0; y < h; y++)
+				{
+					var arrayIndex = y * w + x;
+					var paint = _cache.GetPaint(data[arrayIndex], model);
+					var yP = shiftY + y * minF;
+					g.DrawRect(xP, yP, minF, minF, paint);
+				}
 			}
 		}
 	}
