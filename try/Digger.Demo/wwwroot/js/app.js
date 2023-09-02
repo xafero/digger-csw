@@ -21,9 +21,11 @@ function serializeEvent(e) {
 };
 
 document.addEventListener('keydown', function (e) {
+    e.preventDefault();
     DotNet.invokeMethodAsync('Digger.Demo', 'OnKeyDown', serializeEvent(e));
 });
 
 document.addEventListener('keyup', function (e) {
+    e.preventDefault();
     DotNet.invokeMethodAsync('Digger.Demo', 'OnKeyUp', serializeEvent(e));
 });
