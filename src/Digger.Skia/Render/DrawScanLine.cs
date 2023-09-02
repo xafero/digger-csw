@@ -1,5 +1,6 @@
 ﻿using System;
 using DiggerClassic.API;
+using DiggerSkia.Cache;
 using SkiaSharp;
 
 namespace DiggerSkia.Render
@@ -7,10 +8,12 @@ namespace DiggerSkia.Render
 	public sealed class DrawScanLine : IScanLine
 	{
 		private readonly IDigger _digger;
+		private readonly PaintCache _cache;
 
 		public DrawScanLine(IDigger digger)
 		{
 			_digger = digger;
+			_cache = new PaintCache();
 		}
 
 		public void Paint(SKCanvas g, SKImageInfo info)
@@ -23,8 +26,11 @@ namespace DiggerSkia.Render
 			var w = pc.GetWidth();
 			var h = pc.GetHeight();
 
-			var rw = info.Width * 1d;
-			var rh = info.Height * 1d;
+			var width = info.Width;
+			var height = info.Height;
+
+			var rw = width * 1d;
+			var rh = height * 1d;
 
 			var fw = rw / w;
 			var fh = rh / h;
@@ -35,17 +41,15 @@ namespace DiggerSkia.Render
 
 			var shiftX = (float)(rw - w * minF) / 2;
 			var shiftY = (float)(rh - h * minF) / 2;
-			var paint = new SKPaint { Style = SKPaintStyle.Fill };
 
 			for (var x = 0; x < w; x++)
+			for (var y = 0; y < h; y++)
 			{
-				for (var y = 0; y < h; y++)
-				{
-					var arrayIndex = y * w + x;
-					var (sr, sg, sb) = model.GetColor(data[arrayIndex]);
-					paint.Color = new SKColor((byte)sr, (byte)sg, (byte)sb);
-					g.DrawRect(shiftX + x * minF, shiftY + y * minF, minF, minF, paint);
-				}
+				var arrayIndex = y * w + x;
+				var paint = _cache.GetPaint(data[arrayIndex], model);
+				var xP = shiftX + x * minF;
+				var yP = shiftY + y * minF;
+				g.DrawRect(xP, yP, minF, minF, paint);
 			}
 		}
 	}

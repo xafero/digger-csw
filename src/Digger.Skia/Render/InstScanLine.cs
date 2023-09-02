@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using DiggerClassic.API;
+using DiggerSkia.Cache;
 using SkiaSharp;
 
 namespace DiggerSkia.Render
@@ -8,13 +9,15 @@ namespace DiggerSkia.Render
 	public sealed class InstScanLine : IScanLine
 	{
 		private readonly IDigger _digger;
+		private readonly UintCache _cache;
 
 		public InstScanLine(IDigger digger)
 		{
 			_digger = digger;
+			_cache = new UintCache();
 		}
 
-		public void Paint(SKCanvas g, SKImageInfo gInfo)
+		public void Paint(SKCanvas g, SKImageInfo info)
 		{
 			if (_digger == null)
 				return;
@@ -24,42 +27,39 @@ namespace DiggerSkia.Render
 			var w = pc.GetWidth();
 			var h = pc.GetHeight();
 
-			var width = gInfo.Width;
-			var height = gInfo.Height;
+			var width = info.Width;
+			var height = info.Height;
 
-			var rw = width * 1f;
-			var rh = height * 1f;
+			var rw = width * 1d;
+			var rh = height * 1d;
 
 			var fw = rw / w;
 			var fh = rh / h;
+			var minF = (float)Math.Min(fw, fh);
 
 			var data = pc.GetPixels();
 			var model = pc.GetCurrentSource().Model;
 
-			var minF = Math.Min(fw, fh);
-			var shiftX = (rw - w * minF) / 2;
-			var shiftY = (rh - h * minF) / 2;
+			var shiftX = (float)(rw - w * minF) / 2;
+			var shiftY = (float)(rh - h * minF) / 2;
 
 			var pixels = new uint[width * height];
-			var alpha = byte.MaxValue;
 			var minFi = (int)minF;
 
 			for (var x = 0; x < w; x++)
 			for (var y = 0; y < h; y++)
 			{
 				var arrayIndex = y * w + x;
-				var (sr, sg, sb) = model.GetColor(data[arrayIndex]);
-				var color = (uint)sr + (uint)(sg << 8) + (uint)(sb << 16) + (uint)(alpha << 24);
-
-				var destStartX = x * minFi;
-				var destStartY = y * minFi;
-				var destIndex = destStartY * width + destStartX;
+				var paint = _cache.GetPaint(data[arrayIndex], model);
+				var xP = shiftX + x * minF;
+				var yP = shiftY + y * minF;
+				var destIdx = (int)yP * width + (int)xP;
 
 				for (var dx = 0; dx < minFi; dx++)
 				for (var dy = 0; dy < minFi; dy++)
 				{
-					var destPixelIndex = destIndex + dy * width + dx;
-					pixels[destPixelIndex] = color;
+					var pixIdx = destIdx + dy * width + dx;
+					pixels[pixIdx] = paint;
 				}
 			}
 
@@ -71,7 +71,7 @@ namespace DiggerSkia.Render
 			var rowBytes = sInfo.RowBytes;
 			bitmap.InstallPixels(sInfo, ptr, rowBytes, delegate { gcHandle.Free(); });
 
-			g.DrawBitmap(bitmap, shiftX, shiftY);
+			g.DrawBitmap(bitmap, 0, 0);
 		}
 	}
 }
