@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using DiggerAPI;
+using DiggerClassic.API;
 
 namespace DiggerClassic.Score
 {

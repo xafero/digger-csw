@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using DiggerAPI;
+using DiggerClassic.API;
 using DiggerClassic.Core;
 
 namespace DiggerClassic.Score

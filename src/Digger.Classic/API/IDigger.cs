@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DiggerAPI
+namespace DiggerClassic.API
 {
 	public interface IDigger
 	{

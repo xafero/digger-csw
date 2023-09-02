@@ -1,4 +1,4 @@
-﻿namespace DiggerAPI
+﻿namespace DiggerClassic.API
 {
 	public interface IFactory : ISystem
 	{

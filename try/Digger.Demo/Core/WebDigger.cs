@@ -1,5 +1,6 @@
 ﻿using System;
-using DiggerAPI;
+using DiggerClassic.API;
+using DiggerSkia.Cache;
 using SkiaSharp.Views.Blazor;
 
 namespace DiggerDemo.Core
@@ -9,7 +10,7 @@ namespace DiggerDemo.Core
 		public IDigger _digger;
 		public SKGLView _canvas;
 
-		private readonly ColorCache _cache;
+		private readonly PaintCache _cache;
 
 		public WebDigger() : this(null)
 		{
@@ -18,7 +19,7 @@ namespace DiggerDemo.Core
 		public WebDigger(IDigger digger)
 		{
 			_digger = digger;
-			_cache = new ColorCache();
+			_cache = new PaintCache();
 		}
 		
 		public void PaintSurface(SKPaintGLSurfaceEventArgs e)

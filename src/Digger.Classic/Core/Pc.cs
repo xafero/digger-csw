@@ -1,5 +1,5 @@
 using System;
-using DiggerAPI;
+using DiggerClassic.API;
 using DiggerClassic.Graphics;
 
 namespace DiggerClassic.Core

@@ -5,33 +5,26 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E2975E05-065F-4AD4-8248-A8419FBD8EF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digger.API", "src\Digger.API\Digger.API.csproj", "{7C577223-C098-435A-9835-3FC22ECD4253}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "try", "try", "{24ED23E2-3F40-4037-9D82-0B0F04666CF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digger.Demo", "try\Digger.Demo\Digger.Demo.csproj", "{4D8CC95D-8721-407A-91E0-012D5C4F358C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digger.Demo", "try\Digger.Demo\Digger.Demo.csproj", "{4D8CC95D-8721-407A-91E0-012D5C4F358C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tst", "tst", "{6E8E3377-A8D7-4BB6-A3DD-89D61A9A0759}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digger.Tests", "tst\Digger.Tests\Digger.Tests.csproj", "{B6896E8B-C60D-4527-87AA-F624586F91D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digger.Tests", "tst\Digger.Tests\Digger.Tests.csproj", "{B6896E8B-C60D-4527-87AA-F624586F91D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digger.Classic", "src\Digger.Classic\Digger.Classic.csproj", "{308115EE-A8E6-4EE6-922F-0BB234506E2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digger.Classic", "src\Digger.Classic\Digger.Classic.csproj", "{308115EE-A8E6-4EE6-922F-0BB234506E2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digger.Con", "try\Digger.Con\Digger.Con.csproj", "{C7926439-9618-4085-BCB3-43B5B6C6A3C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digger.Con", "try\Digger.Con\Digger.Con.csproj", "{C7926439-9618-4085-BCB3-43B5B6C6A3C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digger.Skia", "src\Digger.Skia\Digger.Skia.csproj", "{8CE8A1B8-B313-48CA-A4B5-276F6495EC94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7C577223-C098-435A-9835-3FC22ECD4253}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C577223-C098-435A-9835-3FC22ECD4253}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C577223-C098-435A-9835-3FC22ECD4253}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C577223-C098-435A-9835-3FC22ECD4253}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D8CC95D-8721-407A-91E0-012D5C4F358C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D8CC95D-8721-407A-91E0-012D5C4F358C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D8CC95D-8721-407A-91E0-012D5C4F358C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,12 +41,19 @@ Global
 		{C7926439-9618-4085-BCB3-43B5B6C6A3C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7926439-9618-4085-BCB3-43B5B6C6A3C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7926439-9618-4085-BCB3-43B5B6C6A3C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CE8A1B8-B313-48CA-A4B5-276F6495EC94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CE8A1B8-B313-48CA-A4B5-276F6495EC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CE8A1B8-B313-48CA-A4B5-276F6495EC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CE8A1B8-B313-48CA-A4B5-276F6495EC94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7C577223-C098-435A-9835-3FC22ECD4253} = {E2975E05-065F-4AD4-8248-A8419FBD8EF7}
 		{4D8CC95D-8721-407A-91E0-012D5C4F358C} = {24ED23E2-3F40-4037-9D82-0B0F04666CF3}
 		{B6896E8B-C60D-4527-87AA-F624586F91D5} = {6E8E3377-A8D7-4BB6-A3DD-89D61A9A0759}
 		{308115EE-A8E6-4EE6-922F-0BB234506E2C} = {E2975E05-065F-4AD4-8248-A8419FBD8EF7}
 		{C7926439-9618-4085-BCB3-43B5B6C6A3C7} = {24ED23E2-3F40-4037-9D82-0B0F04666CF3}
+		{8CE8A1B8-B313-48CA-A4B5-276F6495EC94} = {E2975E05-065F-4AD4-8248-A8419FBD8EF7}
 	EndGlobalSection
 EndGlobal

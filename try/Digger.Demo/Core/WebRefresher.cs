@@ -1,4 +1,4 @@
-﻿using DiggerAPI;
+﻿using DiggerClassic.API;
 
 namespace DiggerDemo.Core
 {

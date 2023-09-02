@@ -9,13 +9,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
     <PackageReference Include="PublishSPAforGitHubPages.Build" Version="2.1.0" />
-    <PackageReference Include="SkiaSharp" Version="2.88.5" />
     <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="2.88.5" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Digger.Classic\Digger.Classic.csproj" />
+    <ProjectReference Include="..\..\src\Digger.Skia\Digger.Skia.csproj" />
   </ItemGroup>
 
 </Project>

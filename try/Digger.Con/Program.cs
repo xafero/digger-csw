@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
+using DiggerSkia.Render;
 using SkiaSharp;
 
 namespace Digger.Con
@@ -37,31 +38,40 @@ namespace Digger.Con
 			var info = new SKImageInfo(frame.Size.Width, frame.Size.Height);
 			using var bitmap = new SKBitmap(info);
 			using var canvas = new SKCanvas(bitmap);
-			var imageIdx = 0;
 			var outDir = Directory.CreateDirectory("out").FullName;
 			var watch = new Stopwatch();
-			var minMs = long.MaxValue;
-			var maxMs = long.MinValue;
-			double avgMs;
-			var sumMs = 0L;
+			var imageIdx = 0;
+			var minMs = new[] { long.MaxValue, long.MaxValue, long.MaxValue };
+			var maxMs = new[] { long.MinValue, long.MinValue, long.MinValue };
+			var avgMs = new[] { 0d, 0d, 0d };
+			var sumMs = new[] { 0L, 0L, 0L };
+
+			var dd = frm._digger;
+			var lines = new IScanLine[] { new DrawScanLine(dd), new InstScanLine(dd), new SafeScanLine(dd) };
+
 			var timer = new Timer(_ =>
 			{
-				watch.Restart();
-				frm.OnPaintSurface3(canvas, info);
-				var dur = watch.ElapsedMilliseconds;
-
 				imageIdx++;
-				minMs = Math.Min(dur, minMs);
-				maxMs = Math.Max(dur, maxMs);
-				sumMs += dur;
-				avgMs = sumMs * 1d / imageIdx;
-				Console.WriteLine($" #{imageIdx:D6} -> {dur} ms (min = {minMs} | avg = {avgMs:F2} | max = {maxMs})");
+				for (var i = 0; i < lines.Length; i++)
+				{
+					var line = lines[i];
+					watch.Restart();
+					line.Paint(canvas, info);
+					var dur = watch.ElapsedMilliseconds;
 
-				using var data = bitmap.Encode(SKEncodedImageFormat.Png, 100);
-				var fileName = Path.Combine(outDir, $"image_{imageIdx:D6}.png");
-				using var file = File.Create(fileName);
-				data.SaveTo(file);
-				file.Flush(flushToDisk: true);
+					minMs[i] = Math.Min(dur, minMs[i]);
+					maxMs[i] = Math.Max(dur, maxMs[i]);
+					sumMs[i] += dur;
+					avgMs[i] = sumMs[i] * 1d / imageIdx;
+					var pre = $"{imageIdx:D6}_{i:D1}";
+					Console.WriteLine($" {pre} -> {dur} ms (min={minMs[i]} | avg={avgMs[i]:F2} | max={maxMs[i]})");
+
+					using var data = bitmap.Encode(SKEncodedImageFormat.Png, 100);
+					var fileName = Path.Combine(outDir, $"img_{pre}.png");
+					using var file = File.Create(fileName);
+					data.SaveTo(file);
+					file.Flush(flushToDisk: true);
+				}
 			});
 			var period = TimeSpan.FromSeconds(2);
 			timer.Change(period, period);

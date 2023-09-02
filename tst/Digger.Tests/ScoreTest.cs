@@ -1,5 +1,5 @@
 using System.IO;
-using DiggerAPI;
+using DiggerClassic.API;
 using DiggerClassic.Score;
 using FluentAssertions;
 using Xunit;

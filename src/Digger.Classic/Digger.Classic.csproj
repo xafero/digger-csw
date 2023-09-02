@@ -13,8 +13,4 @@
     <EmbeddedResource Include="Resources\icons\*.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Digger.API\Digger.API.csproj" />
-  </ItemGroup>
-
 </Project>

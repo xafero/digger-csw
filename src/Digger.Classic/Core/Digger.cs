@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using DiggerAPI;
+using DiggerClassic.API;
 using DiggerClassic.Graphics;
 using DiggerClassic.Score;
 
