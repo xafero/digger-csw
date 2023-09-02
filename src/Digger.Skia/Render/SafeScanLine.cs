@@ -1,5 +1,6 @@
 ﻿using System;
 using DiggerClassic.API;
+using DiggerSkia.Cache;
 using SkiaSharp;
 
 namespace DiggerSkia.Render
@@ -7,11 +8,13 @@ namespace DiggerSkia.Render
 	public sealed class SafeScanLine : IScanLine
 	{
 		private readonly IDigger _digger;
+		private readonly UintCache _cache;
 		private SKBitmap _bitmap;
 
 		public SafeScanLine(IDigger digger)
 		{
 			_digger = digger;
+			_cache = new UintCache();
 		}
 
 		public void Paint(SKCanvas g, SKImageInfo info)
@@ -32,8 +35,7 @@ namespace DiggerSkia.Render
 
 			var fw = rw / w;
 			var fh = rh / h;
-			var minF = Math.Min(fw, fh);
-			var minFi = (int)minF;
+			var minF = (float)Math.Min(fw, fh);
 
 			var data = pc.GetPixels();
 			var model = pc.GetCurrentSource().Model;
@@ -47,8 +49,9 @@ namespace DiggerSkia.Render
 				_bitmap = null;
 			}
 			_bitmap ??= new SKBitmap(width, height, SKColorType.Rgba8888, SKAlphaType.Premul);
+
+			var minFi = (int)minF;
 			var pixels = _bitmap.GetPixels();
-			var alpha = byte.MaxValue;
 
 			unsafe
 			{
@@ -57,21 +60,23 @@ namespace DiggerSkia.Render
 				for (var x = 0; x < w; x++)
 				for (var y = 0; y < h; y++)
 				{
-					var (sr, sg, sb) = model.GetColor(data[y * w + x]);
-					var color = (uint)sr + (uint)(sg << 8) + (uint)(sb << 16) + (uint)(alpha << 24);
-					var offset = y * minFi * width + x * minFi;
+					var arrayIndex = y * w + x;
+					var paint = _cache.GetPaint(data[arrayIndex], model);
+					var xP = shiftX + x * minF;
+					var yP = shiftY + y * minF;
+					var offset = (int)yP * width + (int)xP;
 
 					for (var dx = 0; dx < minFi; dx++)
 					for (var dy = 0; dy < minFi; dy++)
 					{
 						var dest = offset + dy * width + dx;
 						var copy = ptr + dest;
-						*copy = color;
+						*copy = paint;
 					}
 				}
 			}
 
-			g.DrawBitmap(_bitmap, shiftX, shiftY);
+			g.DrawBitmap(_bitmap, 0, 0);
 		}
 	}
 }

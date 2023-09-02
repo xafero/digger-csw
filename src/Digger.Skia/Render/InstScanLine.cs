@@ -43,8 +43,8 @@ namespace DiggerSkia.Render
 			var shiftX = (float)(rw - w * minF) / 2;
 			var shiftY = (float)(rh - h * minF) / 2;
 
-			var pixels = new uint[width * height];
 			var minFi = (int)minF;
+			var pixels = new uint[width * height];
 
 			for (var x = 0; x < w; x++)
 			for (var y = 0; y < h; y++)
@@ -53,13 +53,13 @@ namespace DiggerSkia.Render
 				var paint = _cache.GetPaint(data[arrayIndex], model);
 				var xP = shiftX + x * minF;
 				var yP = shiftY + y * minF;
-				var destIdx = (int)yP * width + (int)xP;
+				var offset = (int)yP * width + (int)xP;
 
 				for (var dx = 0; dx < minFi; dx++)
 				for (var dy = 0; dy < minFi; dy++)
 				{
-					var pixIdx = destIdx + dy * width + dx;
-					pixels[pixIdx] = paint;
+					var dest = offset + dy * width + dx;
+					pixels[dest] = paint;
 				}
 			}
 
