@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -8,7 +9,7 @@ namespace Digger.Con
 {
 	internal static class Program
 	{
-		private static void Main(string[] args)
+		private static void Main()
 		{
 			Console.WriteLine("Starting...");
 
@@ -38,12 +39,26 @@ namespace Digger.Con
 			using var canvas = new SKCanvas(bitmap);
 			var imageIdx = 0;
 			var outDir = Directory.CreateDirectory("out").FullName;
+			var watch = new Stopwatch();
+			var minMs = long.MaxValue;
+			var maxMs = long.MinValue;
+			double avgMs = 0L;
+			var sumMs = 0L;
 			var timer = new Timer(_ =>
 			{
+				watch.Restart();
 				frm.OnPaintSurface(canvas, info);
+				var dur = watch.ElapsedMilliseconds;
+
 				imageIdx++;
+				minMs = Math.Min(dur, minMs);
+				maxMs = Math.Max(dur, maxMs);
+				sumMs += dur;
+				avgMs = sumMs * 1d / imageIdx;
+				Console.WriteLine($" #{imageIdx:D6} -> {dur} ms (min = {minMs} | avg = {avgMs:F2} | max = {maxMs})");
+
 				using var data = bitmap.Encode(SKEncodedImageFormat.Png, 100);
-				var fileName = Path.Combine(outDir, $"image_{imageIdx:D8}.png");
+				var fileName = Path.Combine(outDir, $"image_{imageIdx:D6}.png");
 				using var file = File.Create(fileName);
 				data.SaveTo(file);
 				file.Flush(flushToDisk: true);

@@ -4,7 +4,7 @@ using SkiaSharp;
 
 namespace Digger.Con
 {
-	internal sealed class ConDigger : IFactory
+	internal sealed class ConDigger : IFactory, IRefresher
 	{
 		public IDigger _digger;
 
@@ -27,10 +27,23 @@ namespace Digger.Con
 			// NO-OP!
 		}
 
-		public IRefresher CreateRefresher(IDigger digger, IColorModel model)
+		public IRefresher CreateRefresher(IDigger _, IColorModel model)
 		{
-			return new ConRefresher { Model = model, Parent = digger };
+			Model = model;
+			return this;
 		}
+
+		public void NewPixels()
+		{
+			NewPixels(0, 0, -1, -1);
+		}
+
+		public void NewPixels(int x, int y, int width, int height)
+		{
+			// NO-OP!
+		}
+
+		public IColorModel Model { get; set; }
 
 		public void OnPaintSurface(SKCanvas g, SKImageInfo info)
 		{
