@@ -9,7 +9,7 @@
 <SKGLView Width="1024px" Height="1024px" @ref="_form" />
 
 @code {
-	private WebDigger _web;
+	private static WebDigger _web;
 	private SKGLView _form;
 	private Dig _game;
 	private Timer _timer;
@@ -39,5 +39,38 @@
 	{
 		_timer.Enabled = false;
 		await _web._digger.RunAsync();
+	}
+
+	[JSInvokable]
+	public static void OnKeyUp(KeyboardEventArgs e)
+	{
+		var code = TranslateKey(e.Key);
+		if (code == null) return;
+		_web.KeyUp(code.Value);
+	}
+
+	[JSInvokable]
+	public static void OnKeyDown(KeyboardEventArgs e)
+	{
+		var code = TranslateKey(e.Key);
+		if (code == null) return;
+		_web.KeyDown(code.Value);
+	}
+
+	private static int? TranslateKey(string key)
+	{
+		switch (key)
+		{
+			case "ArrowLeft": return AppletCompat.Key_Left;
+			case "ArrowRight": return AppletCompat.Key_Right;
+			case "ArrowUp": return AppletCompat.Key_Up;
+			case "ArrowDown": return AppletCompat.Key_Down;
+			case "Control": return AppletCompat.Key_F1;
+			case "Escape": return AppletCompat.Key_F10;
+			case "+": return AppletCompat.Key_Plus;
+			case "-": return AppletCompat.Key_Minus;
+		}
+		if (key.Length == 1) return key[0];
+		return null;
 	}
 }
