@@ -21,11 +21,23 @@ function serializeEvent(e) {
 };
 
 document.addEventListener('keydown', function (e) {
-    e.preventDefault();
     DotNet.invokeMethodAsync('Digger.Demo', 'OnKeyDown', serializeEvent(e));
 });
 
 document.addEventListener('keyup', function (e) {
-    e.preventDefault();
     DotNet.invokeMethodAsync('Digger.Demo', 'OnKeyUp', serializeEvent(e));
 });
+
+function doCanvasSetup() {
+    const canvas = document.getElementById('webCanvas');
+    const canvasDiv = document.getElementById('canvas-container');
+
+    function resizeCanvas() {
+        canvas.width = canvasDiv.clientWidth;
+        canvas.height = canvasDiv.clientHeight;
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('DOMContentLoaded', resizeCanvas);
+    resizeCanvas();
+}

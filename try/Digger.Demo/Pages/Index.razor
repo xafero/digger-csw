@@ -5,8 +5,11 @@
 @using SkiaSharp.Views.Blazor
 @using Dig = DiggerClassic.Core.Digger;
 @using Timer = System.Timers.Timer
+@inject IJSRuntime Js;
 
-<SKGLView Width="1024px" Height="1024px" @ref="_form" />
+<div id="canvas-container">
+	<SKGLView id="webCanvas" Width="640px" Height="400px" @ref="_form" />
+</div>
 
 @code {
 	private static WebDigger _web;
@@ -14,10 +17,12 @@
 	private Dig _game;
 	private Timer _timer;
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
+			await Js.InvokeVoidAsync("doCanvasSetup");
+
 			_web = new WebDigger(null) { _canvas = _form };
 			_form.IgnorePixelScaling = true;
 			_form.EnableRenderLoop = false;

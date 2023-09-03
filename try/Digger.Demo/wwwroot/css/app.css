@@ -33,4 +33,14 @@ h1:focus {
 
 body {
     background-color: black;
+    overflow: hidden;
+}
+
+#canvas-container {
+    width: 100%;
+    height: 100vh;
+}
+
+canvas {
+    display: block;
 }
