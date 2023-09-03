@@ -35,13 +35,13 @@ namespace DiggerSkia.Render
 
 			var fw = rw / w;
 			var fh = rh / h;
-			var minF = (float)Math.Min(fw, fh);
+			var minF = Math.Min(fw, fh);
 
 			var data = pc.GetPixels();
 			var model = pc.GetCurrentSource().Model;
 
-			var shiftX = (float)(rw - w * minF) / 2;
-			var shiftY = (float)(rh - h * minF) / 2;
+			var shiftX = (rw - w * minF) / 2;
+			var shiftY = (rh - h * minF) / 2;
 
 			if (_bitmap != null && (_bitmap.Width != width || _bitmap.Height != height))
 			{
@@ -59,12 +59,12 @@ namespace DiggerSkia.Render
 
 				for (var x = 0; x < w; x++)
 				{
-					var xP = shiftX + x * minF;
+					var xP = shiftX + x * minFi;
 					for (var y = 0; y < h; y++)
 					{
 						var arrayIndex = y * w + x;
 						var paint = _cache.GetPaint(data[arrayIndex], model);
-						var yP = shiftY + y * minF;
+						var yP = shiftY + y * minFi;
 						var offset = (int)yP * width + (int)xP;
 
 						for (var dx = 0; dx < minFi; dx++)
